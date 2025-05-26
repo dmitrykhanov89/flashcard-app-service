@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003
+      author: dmitry.khanov
+      changes:
+        - createTable:
+            tableName: user_word_list
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: word_list_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: user_word_list
+            columnNames: user_id, word_list_id
+        - addForeignKeyConstraint:
+            baseTableName: user_word_list
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_word_list_user
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: user_word_list
+            baseColumnNames: word_list_id
+            referencedTableName: word_lists
+            referencedColumnNames: id
+            constraintName: fk_user_word_list_word_list
+            onDelete: CASCADE
