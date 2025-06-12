@@ -4,102 +4,198 @@ import com.sekhanov.flashcard.dto.CreateWordListDTO;
 import com.sekhanov.flashcard.dto.CreateWordsDTO;
 import com.sekhanov.flashcard.dto.WordListDTO;
 import com.sekhanov.flashcard.dto.WordsDTO;
+import com.sekhanov.flashcard.service.UserService;
 import com.sekhanov.flashcard.service.WordListService;
 import com.sekhanov.flashcard.service.WordsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * REST-контроллер для управления списками слов и словами внутри этих списков.
+ * <p>
+ * Предоставляет эндпоинты для создания, чтения, обновления и удаления списков слов и слов,
+ * а также для связывания списков слов с пользователями.
+ * </p>
+ * <p>
+ * Все запросы к этому контроллеру начинаются с пути {@code /api/word-lists}.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/word-lists")
+@RequiredArgsConstructor
 public class WordListController {
 
     private final WordListService wordListService;
     private final WordsService wordsService;
+    private final UserService userService;
 
-    @Autowired
-    public WordListController(WordListService wordListService, WordsService wordsService) {
-        this.wordListService = wordListService;
-        this.wordsService = wordsService;
-    }
-
+    /**
+     * Обрабатывает POST-запрос на создание нового списка слов.
+     * <p>
+     * Принимает данные для создания списка слов в виде {@link CreateWordListDTO},
+     * создает новый список через сервис {@link WordListService} и возвращает
+     * DTO созданного списка с HTTP статусом 201 Created.
+     * </p>
+     *
+     * @param dto объект {@link CreateWordListDTO}, содержащий данные для создания списка слов.
+     * @return {@link ResponseEntity} с объектом {@link WordListDTO} и статусом 201 Created.
+     */
     @PostMapping
-    public ResponseEntity<WordListDTO> createWordList(@RequestBody CreateWordListDTO createWordListDTO) {
-        WordListDTO wordListDTO = wordListService.createWordList(createWordListDTO);
-        return new ResponseEntity<>(wordListDTO, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public WordListDTO createWordList(@RequestBody CreateWordListDTO dto) {
+        return wordListService.createWordList(dto);
     }
 
+    /**
+     * Создает новое слово в списке слов с указанным идентификатором.
+     *
+     * @param wordListId ID списка слов, к которому добавляется слово.
+     * @param dto   DTO с данными нового слова.
+     * @return ResponseEntity с созданным словом и статусом 201 Created.
+     */
     @PostMapping("/{wordListId}/words")
-    public ResponseEntity<WordsDTO> createWords(@PathVariable Long wordListId,
-                                                @RequestBody CreateWordsDTO entryDTO) {
-        WordsDTO wordsDTO = wordsService.createWords(wordListId, entryDTO);
-        return new ResponseEntity<>(wordsDTO, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public WordsDTO createWords(@PathVariable Long wordListId, @RequestBody CreateWordsDTO dto) {
+        return wordsService.createWords(wordListId, dto);
     }
 
+    /**
+     * Получает список слов по его ID.
+     *
+     * @param id ID списка слов.
+     * @return ResponseEntity с DTO списка слов или статусом 404, если список не найден.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<WordListDTO> getWordListById(@PathVariable Long id) {
-        Optional<WordListDTO> wordListDTO = wordListService.getWordListById(id);
-        return wordListDTO.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public WordListDTO getWordListById(@PathVariable Long id) {
+        return wordListService.getWordListById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Список слов с id " + id + " не найден"));
     }
 
+    /**
+     * Получает слово по его ID.
+     *
+     * @param id ID слова.
+     * @return ResponseEntity с DTO слова или статусом 404, если слово не найдено.
+     */
     @GetMapping("/{wordListId}/words/{id}")
-    public ResponseEntity<WordsDTO> getWordsById(@PathVariable Long id) {
-        Optional<WordsDTO> wordsDTO = wordsService.getWordsById(id);
-        return wordsDTO.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public WordsDTO getWordsById(@PathVariable Long id) {
+        return wordsService.getWordsById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Слово с id " + id + " не найдено"));
     }
 
+    /**
+     * Получает список слов по имени.
+     *
+     * @param name Имя списка слов.
+     * @return ResponseEntity с DTO списка слов или статусом 404, если список не найден.
+     */
     @GetMapping("/name/{name}")
-    public ResponseEntity<WordListDTO> getWordListByName(@PathVariable String name) {
-        Optional<WordListDTO> wordListDTO = wordListService.getWordListByName(name);
-        return wordListDTO.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public WordListDTO getWordListByName(@PathVariable String name) {
+        return wordListService.getWordListByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Список слов с именем '" + name + "' не найден"));
     }
 
+    /**
+     * Получает все списки слов.
+     *
+     * @return ResponseEntity со списком DTO всех списков слов.
+     */
     @GetMapping
-    public ResponseEntity<List<WordListDTO>> getAllWordLists() {
-        List<WordListDTO> wordLists = wordListService.getAllWordLists();
-        return ResponseEntity.ok(wordLists);
+    public List<WordListDTO> getAllWordLists() {
+        return wordListService.getAllWordLists();
     }
 
+    /**
+     * Получает все слова для указанного списка слов.
+     *
+     * @param wordListId ID списка слов.
+     * @return Список DTO всех слов в списке.
+     */
     @GetMapping("/{wordListId}/words")
     public List<WordsDTO> getAllWordsForWordList(@PathVariable Long wordListId) {
         return wordsService.getAllWordsForWordList(wordListId);
     }
 
+    /**
+     * Обновляет список слов с указанным ID.
+     *
+     * @param id        ID списка слов для обновления.
+     * @param dto DTO с новыми данными списка слов.
+     * @return ResponseEntity с обновленным DTO списка слов или статусом 404, если список не найден.
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<WordListDTO> updateWordList(@PathVariable Long id,
-                                                      @RequestBody CreateWordListDTO updateDTO) {
-        Optional<WordListDTO> updated = wordListService.updateWordList(id, updateDTO);
-        return updated.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public WordListDTO updateWordList(@PathVariable Long id, @RequestBody CreateWordListDTO dto) {
+        return wordListService.updateWordList(id, dto)
+                .orElseThrow(() -> new EntityNotFoundException("Список слов с id " + id + " не найден"));
     }
 
+    /**
+     * Обновляет слово с указанным ID.
+     *
+     * @param id       ID слова для обновления.
+     * @param dto DTO с новыми данными слова.
+     * @return ResponseEntity с обновленным DTO слова или статусом 404, если слово не найдено.
+     */
     @PutMapping("/{wordListId}/words/{id}")
-    public ResponseEntity<WordsDTO> updateWords(@PathVariable Long id,
-                                                @RequestBody CreateWordsDTO entryDTO) {
-        Optional<WordsDTO> updatedWords = wordsService.updateWords(id, entryDTO);
-        return updatedWords.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public WordsDTO updateWords(@PathVariable Long id, @RequestBody CreateWordsDTO dto) {
+        return wordsService.updateWords(id, dto)
+                .orElseThrow(() -> new EntityNotFoundException("Слово с id " + id + " не найдено"));
     }
 
+    /**
+     * Удаляет список слов по ID.
+     *
+     * @param id ID списка слов для удаления.
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWordList(@PathVariable Long id) {
-        boolean deleted = wordListService.deleteWordList(id);
-        return deleted ? ResponseEntity.noContent().build()
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWordList(@PathVariable Long id) {
+        if (!wordListService.deleteWordList(id)) {
+            throw new EntityNotFoundException("Список слов с id " + id + " не найден");
+        }
     }
 
+    /**
+     * Удаляет слово по ID.
+     *
+     * @param id ID слова для удаления.
+     */
     @DeleteMapping("/{wordListId}/words/{id}")
-    public ResponseEntity<Void> deleteWords(@PathVariable Long id) {
-        if (wordsService.deleteWords(id)) {
-            return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWords(@PathVariable Long id) {
+        if (!wordsService.deleteWords(id)) {
+            throw new EntityNotFoundException("Слово с id " + id + " не найдено");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    /**
+     * Добавляет список слов к пользователю.
+     *
+     * @param userId     ID пользователя.
+     * @param wordListId ID списка слов.
+     */
+    @PostMapping("/{userId}/add/{wordListId}")
+    public void addWordListToUser(@PathVariable Long userId, @PathVariable Long wordListId) {
+        if (!wordListService.addWordListToUser(userId, wordListId)) {
+            throw new EntityNotFoundException("Пользователь или список слов не найден");
+        }
+    }
+
+    /**
+     * Удаляет список слов у пользователя.
+     *
+     * @param userId     ID пользователя.
+     * @param wordListId ID списка слов.
+     */
+    @DeleteMapping("/{userId}/remove/{wordListId}")
+    public void removeWordListFromUser(@PathVariable Long userId, @PathVariable Long wordListId) {
+        if (!wordListService.removeWordListFromUser(userId, wordListId)) {
+            throw new EntityNotFoundException("Пользователь или список слов не найден");
+        }
     }
 }

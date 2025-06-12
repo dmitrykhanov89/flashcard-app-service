@@ -4,6 +4,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/**
+ * DTO для создания нового слова.
+ * <p>
+ * Содержит термин и его определение.
+ * </p>
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

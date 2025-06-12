@@ -7,6 +7,13 @@ import lombok.AllArgsConstructor;
 
 import java.util.Set;
 
+/**
+ * DTO для передачи данных пользователя.
+ * <p>
+ * Содержит основную информацию о пользователе, включая идентификатор,
+ * имя, фамилию, логин, а также набор списков слов, связанных с пользователем.
+ * </p>
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

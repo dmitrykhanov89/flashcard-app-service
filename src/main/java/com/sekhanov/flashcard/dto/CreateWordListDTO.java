@@ -6,6 +6,12 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+/**
+ * DTO для создания нового списка слов.
+ * <p>
+ * Содержит название списка, список слов и ID пользователя, которому принадлежит список.
+ * </p>
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -52,4 +52,20 @@ public interface WordListService {
      * @return true, если удаление успешно; false, если список не найден
      */
     boolean deleteWordList(Long id);
+    /**
+     * Добавляет список слов пользователю.
+     *
+     * @param userId      идентификатор пользователя
+     * @param wordListId  идентификатор списка слов
+     * @return true, если список был успешно добавлен; false, если пользователь или список не найдены
+     */
+    boolean addWordListToUser(Long userId, Long wordListId);
+    /**
+     * Удаляет список слов у пользователя.
+     *
+     * @param userId     идентификатор пользователя
+     * @param wordListId идентификатор списка слов
+     * @return true, если список был успешно удален; false, если пользователь или список не найдены
+     */
+    boolean removeWordListFromUser(Long userId, Long wordListId);
 }

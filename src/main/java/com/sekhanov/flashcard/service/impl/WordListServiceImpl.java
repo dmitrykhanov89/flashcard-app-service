@@ -1,29 +1,42 @@
 package com.sekhanov.flashcard.service.impl;
 
 import com.sekhanov.flashcard.dto.*;
+import com.sekhanov.flashcard.entity.User;
 import com.sekhanov.flashcard.entity.WordList;
 import com.sekhanov.flashcard.entity.Words;
 import com.sekhanov.flashcard.repository.UserRepository;
 import com.sekhanov.flashcard.repository.WordListRepository;
 import com.sekhanov.flashcard.service.WordListService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <p>
+ * Обеспечивает CRUD-операции и дополнительные функции, связанные с управлением списками слов,
+ * включая создание, обновление, удаление, получение и привязку списков к пользователям.
+ * </p>
+ *
+ * <p>Ключевые функции:</p>
+ * <ul>
+ *     <li>Создание нового списка слов с привязкой к пользователю</li>
+ *     <li>Поиск списка по ID или имени</li>
+ *     <li>Получение всех списков слов</li>
+ *     <li>Обновление списка слов (включая полную замену списка слов)</li>
+ *     <li>Удаление списка слов</li>
+ *     <li>Добавление списка слов к пользователю</li>
+ *     <li>Удаление списка слов у пользователя</li>
+ * </ul>
+ */
 @Service
+@RequiredArgsConstructor
 public class WordListServiceImpl implements WordListService {
 
     private final WordListRepository wordListRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public WordListServiceImpl(WordListRepository wordListRepository, UserRepository userRepository) {
-        this.wordListRepository = wordListRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     @Transactional
@@ -106,6 +119,49 @@ public class WordListServiceImpl implements WordListService {
             wordListRepository.deleteById(id);
             return true;
         }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean addWordListToUser(Long userId, Long wordListId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<WordList> optionalWordList = wordListRepository.findById(wordListId);
+
+        if (optionalUser.isPresent() && optionalWordList.isPresent()) {
+            User user = optionalUser.get();
+            WordList wordList = optionalWordList.get();
+
+            // Избегаем повторного добавления
+            if (!user.getWordLists().contains(wordList)) {
+                user.getWordLists().add(wordList);
+                userRepository.save(user);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean removeWordListFromUser(Long userId, Long wordListId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<WordList> optionalWordList = wordListRepository.findById(wordListId);
+
+        if (optionalUser.isPresent() && optionalWordList.isPresent()) {
+            User user = optionalUser.get();
+            WordList wordList = optionalWordList.get();
+
+            if (user.getWordLists().contains(wordList)) {
+                user.getWordLists().remove(wordList);
+                userRepository.save(user);
+            }
+
+            return true;
+        }
+
         return false;
     }
 

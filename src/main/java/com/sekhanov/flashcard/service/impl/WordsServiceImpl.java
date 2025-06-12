@@ -7,7 +7,7 @@ import com.sekhanov.flashcard.entity.Words;
 import com.sekhanov.flashcard.repository.WordsRepository;
 import com.sekhanov.flashcard.repository.WordListRepository;
 import com.sekhanov.flashcard.service.WordsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +15,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * Предоставляет CRUD-функциональность для сущностей {@link com.sekhanov.flashcard.entity.Words}, связанных со списками слов.
+ * Используется для создания, получения, обновления и удаления отдельных слов, а также получения всех слов для заданного списка.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Создание нового слова и его привязка к списку слов</li>
+ *     <li>Получение слова по ID</li>
+ *     <li>Получение всех слов, принадлежащих конкретному списку</li>
+ *     <li>Обновление содержимого слова</li>
+ *     <li>Удаление слова</li>
+ * </ul>
+ */
 @Service
+@RequiredArgsConstructor
 public class WordsServiceImpl implements WordsService {
 
     private final WordsRepository wordsRepository;
     private final WordListRepository wordListRepository;
-
-    @Autowired
-    public WordsServiceImpl(WordsRepository wordsRepository,
-                            WordListRepository wordListRepository) {
-        this.wordsRepository = wordsRepository;
-        this.wordListRepository = wordListRepository;
-    }
 
     @Override
     @Transactional
