@@ -1,12 +1,12 @@
 package com.sekhanov.flashcard.controller;
 
-import com.sekhanov.flashcard.dto.CreateWordListDTO;
-import com.sekhanov.flashcard.dto.CreateWordsDTO;
-import com.sekhanov.flashcard.dto.WordListDTO;
-import com.sekhanov.flashcard.dto.WordsDTO;
+import com.sekhanov.flashcard.dto.CreateFlashcardSetDTO;
+import com.sekhanov.flashcard.dto.CreateCardsDTO;
+import com.sekhanov.flashcard.dto.FlashcardSetDTO;
+import com.sekhanov.flashcard.dto.CardsDTO;
 import com.sekhanov.flashcard.service.UserService;
-import com.sekhanov.flashcard.service.WordListService;
-import com.sekhanov.flashcard.service.WordsService;
+import com.sekhanov.flashcard.service.FlashcardSetService;
+import com.sekhanov.flashcard.service.CardsService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,42 +26,42 @@ import java.util.List;
  * </p>
  */
 @RestController
-@RequestMapping("/api/word-lists")
+@RequestMapping("/api/flashcardSet")
 @RequiredArgsConstructor
-public class WordListController {
+public class FlashcardSetController {
 
-    private final WordListService wordListService;
-    private final WordsService wordsService;
+    private final FlashcardSetService flashcardSetService;
+    private final CardsService cardsService;
     private final UserService userService;
 
     /**
      * Обрабатывает POST-запрос на создание нового списка слов.
      * <p>
-     * Принимает данные для создания списка слов в виде {@link CreateWordListDTO},
-     * создает новый список через сервис {@link WordListService} и возвращает
+     * Принимает данные для создания списка слов в виде {@link CreateFlashcardSetDTO},
+     * создает новый список через сервис {@link FlashcardSetService} и возвращает
      * DTO созданного списка с HTTP статусом 201 Created.
      * </p>
      *
-     * @param dto объект {@link CreateWordListDTO}, содержащий данные для создания списка слов.
-     * @return {@link ResponseEntity} с объектом {@link WordListDTO} и статусом 201 Created.
+     * @param dto объект {@link CreateFlashcardSetDTO}, содержащий данные для создания списка слов.
+     * @return {@link ResponseEntity} с объектом {@link FlashcardSetDTO} и статусом 201 Created.
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public WordListDTO createWordList(@RequestBody CreateWordListDTO dto) {
-        return wordListService.createWordList(dto);
+    public FlashcardSetDTO createFlashcardSet(@RequestBody CreateFlashcardSetDTO dto) {
+        return flashcardSetService.createFlashcardSet(dto);
     }
 
     /**
      * Создает новое слово в списке слов с указанным идентификатором.
      *
-     * @param wordListId ID списка слов, к которому добавляется слово.
+     * @param flashcardSetId ID списка слов, к которому добавляется слово.
      * @param dto   DTO с данными нового слова.
      * @return ResponseEntity с созданным словом и статусом 201 Created.
      */
-    @PostMapping("/{wordListId}/words")
+    @PostMapping("/{flashcardSetId}/cards")
     @ResponseStatus(HttpStatus.CREATED)
-    public WordsDTO createWords(@PathVariable Long wordListId, @RequestBody CreateWordsDTO dto) {
-        return wordsService.createWords(wordListId, dto);
+    public CardsDTO createCards(@PathVariable Long flashcardSetId, @RequestBody CreateCardsDTO dto) {
+        return cardsService.createCards(flashcardSetId, dto);
     }
 
     /**
@@ -71,8 +71,8 @@ public class WordListController {
      * @return ResponseEntity с DTO списка слов или статусом 404, если список не найден.
      */
     @GetMapping("/{id}")
-    public WordListDTO getWordListById(@PathVariable Long id) {
-        return wordListService.getWordListById(id)
+    public FlashcardSetDTO getFlashcardSetById(@PathVariable Long id) {
+        return flashcardSetService.getFlashcardSetById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Список слов с id " + id + " не найден"));
     }
 
@@ -82,9 +82,9 @@ public class WordListController {
      * @param id ID слова.
      * @return ResponseEntity с DTO слова или статусом 404, если слово не найдено.
      */
-    @GetMapping("/{wordListId}/words/{id}")
-    public WordsDTO getWordsById(@PathVariable Long id) {
-        return wordsService.getWordsById(id)
+    @GetMapping("/{flashcardSetId}/cards/{id}")
+    public CardsDTO getCardsById(@PathVariable Long id) {
+        return cardsService.getCardsById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Слово с id " + id + " не найдено"));
     }
 
@@ -95,8 +95,8 @@ public class WordListController {
      * @return ResponseEntity с DTO списка слов или статусом 404, если список не найден.
      */
     @GetMapping("/name/{name}")
-    public WordListDTO getWordListByName(@PathVariable String name) {
-        return wordListService.getWordListByName(name)
+    public FlashcardSetDTO getFlashcardSetByName(@PathVariable String name) {
+        return flashcardSetService.getFlashcardSetByName(name)
                 .orElseThrow(() -> new EntityNotFoundException("Список слов с именем '" + name + "' не найден"));
     }
 
@@ -106,19 +106,19 @@ public class WordListController {
      * @return ResponseEntity со списком DTO всех списков слов.
      */
     @GetMapping
-    public List<WordListDTO> getAllWordLists() {
-        return wordListService.getAllWordLists();
+    public List<FlashcardSetDTO> getAllFlashcardSet() {
+        return flashcardSetService.getAllFlashcardSet();
     }
 
     /**
      * Получает все слова для указанного списка слов.
      *
-     * @param wordListId ID списка слов.
+     * @param flashcardSetId ID списка слов.
      * @return Список DTO всех слов в списке.
      */
-    @GetMapping("/{wordListId}/words")
-    public List<WordsDTO> getAllWordsForWordList(@PathVariable Long wordListId) {
-        return wordsService.getAllWordsForWordList(wordListId);
+    @GetMapping("/{flashcardSetId}/cards")
+    public List<CardsDTO> getAllCardsForFlashcardSet(@PathVariable Long flashcardSetId) {
+        return cardsService.getAllCardsForFlashcardSet(flashcardSetId);
     }
 
     /**
@@ -129,8 +129,8 @@ public class WordListController {
      * @return ResponseEntity с обновленным DTO списка слов или статусом 404, если список не найден.
      */
     @PutMapping("/{id}")
-    public WordListDTO updateWordList(@PathVariable Long id, @RequestBody CreateWordListDTO dto) {
-        return wordListService.updateWordList(id, dto)
+    public FlashcardSetDTO updateFlashcardSet(@PathVariable Long id, @RequestBody CreateFlashcardSetDTO dto) {
+        return flashcardSetService.updateFlashcardSet(id, dto)
                 .orElseThrow(() -> new EntityNotFoundException("Список слов с id " + id + " не найден"));
     }
 
@@ -141,9 +141,9 @@ public class WordListController {
      * @param dto DTO с новыми данными слова.
      * @return ResponseEntity с обновленным DTO слова или статусом 404, если слово не найдено.
      */
-    @PutMapping("/{wordListId}/words/{id}")
-    public WordsDTO updateWords(@PathVariable Long id, @RequestBody CreateWordsDTO dto) {
-        return wordsService.updateWords(id, dto)
+    @PutMapping("/{flashcardSetId}/cards/{id}")
+    public CardsDTO updateCards(@PathVariable Long id, @RequestBody CreateCardsDTO dto) {
+        return cardsService.updateCards(id, dto)
                 .orElseThrow(() -> new EntityNotFoundException("Слово с id " + id + " не найдено"));
     }
 
@@ -154,8 +154,8 @@ public class WordListController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteWordList(@PathVariable Long id) {
-        if (!wordListService.deleteWordList(id)) {
+    public void deleteFlashcardSet(@PathVariable Long id) {
+        if (!flashcardSetService.deleteFlashcardSet(id)) {
             throw new EntityNotFoundException("Список слов с id " + id + " не найден");
         }
     }
@@ -165,10 +165,10 @@ public class WordListController {
      *
      * @param id ID слова для удаления.
      */
-    @DeleteMapping("/{wordListId}/words/{id}")
+    @DeleteMapping("/{flashcardSetId}/cards/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteWords(@PathVariable Long id) {
-        if (!wordsService.deleteWords(id)) {
+    public void deleteCards(@PathVariable Long id) {
+        if (!cardsService.deleteCards(id)) {
             throw new EntityNotFoundException("Слово с id " + id + " не найдено");
         }
     }
@@ -177,11 +177,11 @@ public class WordListController {
      * Добавляет список слов к пользователю.
      *
      * @param userId     ID пользователя.
-     * @param wordListId ID списка слов.
+     * @param flashcardSetId ID списка слов.
      */
-    @PostMapping("/{userId}/add/{wordListId}")
-    public void addWordListToUser(@PathVariable Long userId, @PathVariable Long wordListId) {
-        if (!wordListService.addWordListToUser(userId, wordListId)) {
+    @PostMapping("/{userId}/add/{flashcardSetId}")
+    public void addFlashcardSetToUser(@PathVariable Long userId, @PathVariable Long flashcardSetId) {
+        if (!flashcardSetService.addFlashcardSetToUser(userId, flashcardSetId)) {
             throw new EntityNotFoundException("Пользователь или список слов не найден");
         }
     }
@@ -190,11 +190,11 @@ public class WordListController {
      * Удаляет список слов у пользователя.
      *
      * @param userId     ID пользователя.
-     * @param wordListId ID списка слов.
+     * @param flashcardSetId ID списка слов.
      */
-    @DeleteMapping("/{userId}/remove/{wordListId}")
-    public void removeWordListFromUser(@PathVariable Long userId, @PathVariable Long wordListId) {
-        if (!wordListService.removeWordListFromUser(userId, wordListId)) {
+    @DeleteMapping("/{userId}/remove/{flashcardSetId}")
+    public void removeFlashcardSetFromUser(@PathVariable Long userId, @PathVariable Long flashcardSetId) {
+        if (!flashcardSetService.removeFlashcardSetFromUser(userId, flashcardSetId)) {
             throw new EntityNotFoundException("Пользователь или список слов не найден");
         }
     }

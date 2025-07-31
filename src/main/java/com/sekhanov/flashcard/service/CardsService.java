@@ -1,15 +1,15 @@
 package com.sekhanov.flashcard.service;
 
-import com.sekhanov.flashcard.dto.CreateWordsDTO;
-import com.sekhanov.flashcard.dto.WordsDTO;
+import com.sekhanov.flashcard.dto.CreateCardsDTO;
+import com.sekhanov.flashcard.dto.CardsDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Сервис для управления словами (Words), связанными со списками слов (WordList).
+ * Сервис для управления словами (Cards), связанными со списками слов (FlashcardSet).
  */
-public interface WordsService {
+public interface CardsService {
     /**
      * Создает новое слово и привязывает его к существующему списку слов.
      *
@@ -17,21 +17,21 @@ public interface WordsService {
      * @param entryDTO   DTO с данными для создания слова
      * @return DTO созданного слова
      */
-    WordsDTO createWords(Long wordListId, CreateWordsDTO entryDTO);
+    CardsDTO createCards(Long wordListId, CreateCardsDTO entryDTO);
     /**
      * Получает слово по его идентификатору.
      *
      * @param id ID слова
      * @return Optional с DTO слова, если найдено
      */
-    Optional<WordsDTO> getWordsById(Long id);
+    Optional<CardsDTO> getCardsById(Long id);
     /**
      * Получает все слова, принадлежащие указанному списку слов.
      *
      * @param wordListId ID списка слов
      * @return список DTO слов, принадлежащих списку
      */
-    List<WordsDTO> getAllWordsForWordList(Long wordListId);
+    List<CardsDTO> getAllCardsForFlashcardSet(Long wordListId);
     /**
      * Обновляет существующее слово по его идентификатору.
      *
@@ -39,12 +39,12 @@ public interface WordsService {
      * @param entryDTO DTO с новыми значениями
      * @return Optional с обновленным DTO слова, если найдено
      */
-    Optional<WordsDTO> updateWords(Long id, CreateWordsDTO entryDTO);
+    Optional<CardsDTO> updateCards(Long id, CreateCardsDTO entryDTO);
     /**
      * Удаляет слово по его идентификатору.
      *
      * @param id ID удаляемого слова
      * @return true, если удаление прошло успешно; false, если слово не найдено
      */
-    boolean deleteWords(Long id);
+    boolean deleteCards(Long id);
 }

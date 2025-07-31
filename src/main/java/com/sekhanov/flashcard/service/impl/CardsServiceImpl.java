@@ -1,12 +1,12 @@
 package com.sekhanov.flashcard.service.impl;
 
-import com.sekhanov.flashcard.dto.CreateWordsDTO;
-import com.sekhanov.flashcard.dto.WordsDTO;
-import com.sekhanov.flashcard.entity.WordList;
-import com.sekhanov.flashcard.entity.Words;
-import com.sekhanov.flashcard.repository.WordsRepository;
-import com.sekhanov.flashcard.repository.WordListRepository;
-import com.sekhanov.flashcard.service.WordsService;
+import com.sekhanov.flashcard.dto.CreateCardsDTO;
+import com.sekhanov.flashcard.dto.CardsDTO;
+import com.sekhanov.flashcard.entity.Cards;
+import com.sekhanov.flashcard.entity.FlashcardSet;
+import com.sekhanov.flashcard.repository.CardsRepository;
+import com.sekhanov.flashcard.repository.FlashcardSetRepository;
+import com.sekhanov.flashcard.service.CardsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * Предоставляет CRUD-функциональность для сущностей {@link com.sekhanov.flashcard.entity.Words}, связанных со списками слов.
+ * Предоставляет CRUD-функциональность для сущностей {@link Cards}, связанных со списками слов.
  * Используется для создания, получения, обновления и удаления отдельных слов, а также получения всех слов для заданного списка.
  * </p>
  *
@@ -32,37 +32,37 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class WordsServiceImpl implements WordsService {
+public class CardsServiceImpl implements CardsService {
 
-    private final WordsRepository wordsRepository;
-    private final WordListRepository wordListRepository;
+    private final CardsRepository cardsRepository;
+    private final FlashcardSetRepository flashcardSetRepository;
 
     @Override
     @Transactional
-    public WordsDTO createWords(Long wordListId, CreateWordsDTO entryDTO) {
-        WordList wordList = wordListRepository.findById(wordListId)
-                .orElseThrow(() -> new RuntimeException("WordList not found"));
+    public CardsDTO createCards(Long wordListId, CreateCardsDTO entryDTO) {
+        FlashcardSet flashcardSet = flashcardSetRepository.findById(wordListId)
+                .orElseThrow(() -> new RuntimeException("FlashcardSet not found"));
 
-        Words entry = new Words();
+        Cards entry = new Cards();
         entry.setTerm(entryDTO.getTerm());
         entry.setDefinition(entryDTO.getDefinition());
-        entry.setWordList(wordList);
+        entry.setFlashcardSet(flashcardSet);
 
-        entry = wordsRepository.save(entry);
+        entry = cardsRepository.save(entry);
 
         return toDTO(entry);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<WordsDTO> getWordsById(Long id) {
-        return wordsRepository.findById(id).map(this::toDTO);
+    public Optional<CardsDTO> getCardsById(Long id) {
+        return cardsRepository.findById(id).map(this::toDTO);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<WordsDTO> getAllWordsForWordList(Long wordListId) {
-        return wordsRepository.findByWordListId(wordListId)
+    public List<CardsDTO> getAllCardsForFlashcardSet(Long wordListId) {
+        return cardsRepository.findByFlashcardSetId(wordListId)
                 .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -70,14 +70,14 @@ public class WordsServiceImpl implements WordsService {
 
     @Override
     @Transactional
-    public Optional<WordsDTO> updateWords(Long id, CreateWordsDTO entryDTO) {
-        Optional<Words> optionalEntry = wordsRepository.findById(id);
+    public Optional<CardsDTO> updateCards(Long id, CreateCardsDTO entryDTO) {
+        Optional<Cards> optionalEntry = cardsRepository.findById(id);
         if (optionalEntry.isPresent()) {
-            Words entry = optionalEntry.get();
+            Cards entry = optionalEntry.get();
             entry.setTerm(entryDTO.getTerm());
             entry.setDefinition(entryDTO.getDefinition());
 
-            entry = wordsRepository.save(entry);
+            entry = cardsRepository.save(entry);
             return Optional.of(toDTO(entry));
         }
         return Optional.empty();
@@ -85,16 +85,16 @@ public class WordsServiceImpl implements WordsService {
 
     @Override
     @Transactional
-    public boolean deleteWords(Long id) {
-        if (wordsRepository.existsById(id)) {
-            wordsRepository.deleteById(id);
+    public boolean deleteCards(Long id) {
+        if (cardsRepository.existsById(id)) {
+            cardsRepository.deleteById(id);
             return true;
         }
         return false;
     }
 
     // Преобразование WordListEntry в WordListEntryDTO
-    private WordsDTO toDTO(Words entry) {
-        return new WordsDTO(entry.getId(), entry.getTerm(), entry.getDefinition());
+    private CardsDTO toDTO(Cards entry) {
+        return new CardsDTO(entry.getId(), entry.getTerm(), entry.getDefinition());
     }
 }

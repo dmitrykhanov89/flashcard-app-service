@@ -9,16 +9,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.sekhanov.flashcard.entity.Cards;
 
 @Entity
-@Table(name = "word_lists")
+@Table(name = "flashcard_set")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"users", "entries"})
+@ToString(exclude = {"users", "cards"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class WordList {
+public class FlashcardSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +29,20 @@ public class WordList {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "wordLists")
+    private String description;
+
+    @Column(nullable = false)
+    private boolean shared = false;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @ManyToMany(mappedBy = "flashcardSets")
     @JsonBackReference
     private Set<User> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "wordList", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "flashcardSet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Words> entries = new ArrayList<>();
+    private List<Cards> cards = new ArrayList<>();
 }

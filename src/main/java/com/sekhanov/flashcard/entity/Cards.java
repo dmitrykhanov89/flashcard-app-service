@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 @Entity
-@Table(name = "words")
+@Table(name = "cards") // ✅ новое имя таблицы
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "wordList")
+@ToString(exclude = "flashcardSet")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Words {
+public class Cards {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Words {
     private String definition;
 
     @ManyToOne
-    @JoinColumn(name = "word_list_id", nullable = false)
+    @JoinColumn(name = "flashcard_set_id", nullable = false) // ✅ новое имя колонки
     @JsonBackReference
-    private WordList wordList;
+    private FlashcardSet flashcardSet;
 }

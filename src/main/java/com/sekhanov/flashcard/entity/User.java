@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"password", "wordLists"})
+@ToString(exclude = {"password", "flashcardSets"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
@@ -35,10 +35,10 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_word_list",
+            name = "user_flashcard_set",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "word_list_id")
+            inverseJoinColumns = @JoinColumn(name = "flashcard_set_id")
     )
     @JsonManagedReference
-    private Set<WordList> wordLists = new HashSet<>();
+    private Set<FlashcardSet> flashcardSets = new HashSet<>();
 }

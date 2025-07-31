@@ -1,0 +1,97 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005
+      author: dmitry.khanov
+      changes:
+        # 1. Переименование таблицы word_lists -> flashcard_set
+        - renameTable:
+            oldTableName: word_lists
+            newTableName: flashcard_set
+
+        # 2. Добавление owner_id в flashcard_set
+        - addColumn:
+            tableName: flashcard_set
+            columns:
+              - column:
+                  name: owner_id
+                  type: BIGINT
+
+        # 3. Внешний ключ flashcard_set.owner_id -> users.id
+        - addForeignKeyConstraint:
+            baseTableName: flashcard_set
+            baseColumnNames: owner_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_flashcard_set_owner
+            onDelete: SET NULL
+
+        # 4. Добавление поля shared
+        - addColumn:
+            tableName: flashcard_set
+            columns:
+              - column:
+                  name: shared
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+        # 5. Добавление поля description
+        - addColumn:
+            tableName: flashcard_set
+            columns:
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+
+        # 6. Переименование таблицы words -> cards
+        - renameTable:
+            oldTableName: words
+            newTableName: cards
+
+        # 7. Удаление старого внешнего ключа cards.word_list_id
+        - dropForeignKeyConstraint:
+            baseTableName: cards
+            constraintName: fk_entry_word_list
+
+        # 8. Переименование колонки word_list_id -> flashcard_set_id в cards
+        - renameColumn:
+            tableName: cards
+            oldColumnName: word_list_id
+            newColumnName: flashcard_set_id
+            columnDataType: BIGINT
+
+        # 9. Создание нового внешнего ключа cards.flashcard_set_id -> flashcard_set.id
+        - addForeignKeyConstraint:
+            baseTableName: cards
+            baseColumnNames: flashcard_set_id
+            referencedTableName: flashcard_set
+            referencedColumnNames: id
+            constraintName: fk_cards_flashcard_set
+            onDelete: CASCADE
+
+        # 10. Удаление старого внешнего ключа в user_word_list
+        - dropForeignKeyConstraint:
+            baseTableName: user_word_list
+            constraintName: fk_user_word_list_word_list
+
+        # 11. Переименование колонки word_list_id -> flashcard_set_id в user_word_list
+        - renameColumn:
+            tableName: user_word_list
+            oldColumnName: word_list_id
+            newColumnName: flashcard_set_id
+            columnDataType: BIGINT
+
+        # 12. Создание нового внешнего ключа user_word_list.flashcard_set_id -> flashcard_set.id
+        - addForeignKeyConstraint:
+            baseTableName: user_word_list
+            baseColumnNames: flashcard_set_id
+            referencedTableName: flashcard_set
+            referencedColumnNames: id
+            constraintName: fk_user_flashcard_set_flashcard_set
+            onDelete: CASCADE
+
+        # 13. Переименование таблицы user_word_list -> user_flashcard_set
+        - renameTable:
+            oldTableName: user_word_list
+            newTableName: user_flashcard_set

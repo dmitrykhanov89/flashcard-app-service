@@ -1,6 +1,6 @@
 package com.sekhanov.flashcard.dto;
 
-import com.sekhanov.flashcard.entity.WordList;
+import com.sekhanov.flashcard.entity.FlashcardSet;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -23,5 +23,5 @@ public class UserDTO {
     private String surname;
     private String login;
 
-    private Set<WordList> wordLists;
+    private Set<FlashcardSet> flashcardSets;
 }

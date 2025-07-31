@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/003-create-user-word-list-table.yaml
   - include:
       file: db/changelog/004-create-words-table.yaml
+  - include:
+      file: db/changelog/005-update-flashcard-set.yaml

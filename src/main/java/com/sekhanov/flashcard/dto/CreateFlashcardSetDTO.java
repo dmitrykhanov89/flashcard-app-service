@@ -15,8 +15,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateWordListDTO {
+public class CreateFlashcardSetDTO {
     private String name;
-    private List<CreateWordsDTO> words;
+    private List<CreateCardsDTO> cards;
     private Long userId;
 }

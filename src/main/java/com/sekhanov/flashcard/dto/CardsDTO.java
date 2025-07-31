@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WordsDTO {
+public class CardsDTO {
     private Long id;
     private String term;
     private String definition;

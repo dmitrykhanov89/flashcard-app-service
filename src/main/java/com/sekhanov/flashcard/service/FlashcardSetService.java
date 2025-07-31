@@ -1,57 +1,57 @@
 package com.sekhanov.flashcard.service;
 
-import com.sekhanov.flashcard.dto.CreateWordListDTO;
-import com.sekhanov.flashcard.dto.WordListDTO;
+import com.sekhanov.flashcard.dto.CreateFlashcardSetDTO;
+import com.sekhanov.flashcard.dto.FlashcardSetDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Сервис для управления списками слов (WordList).
+ * Сервис для управления списками слов (FlashcardSet).
  */
-public interface WordListService {
+public interface FlashcardSetService {
     /**
      * Создает новый список слов.
      *
-     * @param createWordListDTO DTO с данными для создания списка слов
+     * @param createFlashcardSetDTO DTO с данными для создания списка слов
      * @return DTO созданного списка слов
      */
-    WordListDTO createWordList(CreateWordListDTO createWordListDTO);
+    FlashcardSetDTO createFlashcardSet(CreateFlashcardSetDTO createFlashcardSetDTO);
     /**
      * Получает список слов по его id.
      *
      * @param id идентификатор списка слов
-     * @return Optional с WordListDTO, если найден
+     * @return Optional с FlashcardSetDTO, если найден
      */
-    Optional<WordListDTO> getWordListById(Long id);
+    Optional<FlashcardSetDTO> getFlashcardSetById(Long id);
     /**
      * Получает список слов по его названию.
      *
      * @param name название списка слов
-     * @return Optional с WordListDTO, если найден
+     * @return Optional с FlashcardSetDTO, если найден
      */
-    Optional<WordListDTO> getWordListByName(String name);
+    Optional<FlashcardSetDTO> getFlashcardSetByName(String name);
     /**
      * Получает все списки слов.
      *
-     * @return список всех WordListDTO
+     * @return список всех FlashcardSetDTO
      */
-    List<WordListDTO> getAllWordLists();
+    List<FlashcardSetDTO> getAllFlashcardSet();
     /**
      * Обновляет существующий список слов.
      *
      * @param id идентификатор обновляемого списка
      * @param updateDTO DTO с обновленными данными
-     * @return Optional с обновленным WordListDTO, если найден
+     * @return Optional с обновленным FlashcardSetDTO, если найден
      */
-    Optional<WordListDTO> updateWordList(Long id, CreateWordListDTO updateDTO);
+    Optional<FlashcardSetDTO> updateFlashcardSet(Long id, CreateFlashcardSetDTO updateDTO);
     /**
      * Удаляет список слов по его идентификатору.
      *
      * @param id идентификатор удаляемого списка слов
      * @return true, если удаление успешно; false, если список не найден
      */
-    boolean deleteWordList(Long id);
+    boolean deleteFlashcardSet(Long id);
     /**
      * Добавляет список слов пользователю.
      *
@@ -59,7 +59,7 @@ public interface WordListService {
      * @param wordListId  идентификатор списка слов
      * @return true, если список был успешно добавлен; false, если пользователь или список не найдены
      */
-    boolean addWordListToUser(Long userId, Long wordListId);
+    boolean addFlashcardSetToUser(Long userId, Long wordListId);
     /**
      * Удаляет список слов у пользователя.
      *
@@ -67,5 +67,5 @@ public interface WordListService {
      * @param wordListId идентификатор списка слов
      * @return true, если список был успешно удален; false, если пользователь или список не найдены
      */
-    boolean removeWordListFromUser(Long userId, Long wordListId);
+    boolean removeFlashcardSetFromUser(Long userId, Long wordListId);
 }

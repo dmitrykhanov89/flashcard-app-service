@@ -3,21 +3,12 @@ package com.sekhanov.flashcard.service.impl;
 import com.sekhanov.flashcard.dto.CreateUserDTO;
 import com.sekhanov.flashcard.dto.UserDTO;
 import com.sekhanov.flashcard.entity.User;
-import com.sekhanov.flashcard.entity.WordList;
 import com.sekhanov.flashcard.repository.UserRepository;
-import com.sekhanov.flashcard.repository.WordListRepository;
 import com.sekhanov.flashcard.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -57,7 +48,7 @@ public class UserServiceImpl implements UserService {
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
         dto.setLogin(user.getLogin());
-        dto.setWordLists(user.getWordLists());
+        dto.setFlashcardSets(user.getFlashcardSets());
         return dto;
     }
 

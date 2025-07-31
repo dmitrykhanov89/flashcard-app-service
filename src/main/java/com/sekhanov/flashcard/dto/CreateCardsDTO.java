@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateWordsDTO {
+public class CreateCardsDTO {
     private String term;
     private String definition;
 }
