@@ -7,6 +7,7 @@ import com.sekhanov.flashcard.entity.User;
 import com.sekhanov.flashcard.repository.UserRepository;
 import com.sekhanov.flashcard.repository.FlashcardSetRepository;
 import com.sekhanov.flashcard.service.FlashcardSetService;
+import com.sekhanov.flashcard.service.LastSeenFlashcardSetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,38 +38,44 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
 
     private final FlashcardSetRepository flashcardSetRepository;
     private final UserRepository userRepository;
+    private final LastSeenFlashcardSetService lastSeenFlashcardSetService;
+
+    private List<Cards> mapCards(List<CreateCardsDTO> cardDTOs, FlashcardSet flashcardSet) {
+        return cardDTOs.stream()
+                .map(dto -> {
+                    Cards card = new Cards();
+                    card.setTerm(dto.getTerm());
+                    card.setDefinition(dto.getDefinition());
+                    card.setFlashcardSet(flashcardSet);
+                    return card;
+                })
+                .toList();
+    }
 
     @Override
     @Transactional
     public FlashcardSetDTO createFlashcardSet(CreateFlashcardSetDTO dto) {
+        User owner = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         FlashcardSet flashcardSet = new FlashcardSet();
         flashcardSet.setName(dto.getName());
+        flashcardSet.setDescription(dto.getDescription());
+        flashcardSet.setOwner(owner);
+        flashcardSet.getUsers().add(owner);
+        owner.getFlashcardSets().add(flashcardSet);
 
-        // 1) Привязываем пользователя
-        userRepository.findById(dto.getUserId()).ifPresent(user -> {
-            flashcardSet.setOwner(user);
-            flashcardSet.getUsers().add(user);
-            user.getFlashcardSets().add(flashcardSet);
-        });
-
-        // 2) Добавляем слова (как было)
-        if (dto.getCards() != null) {
-            for (CreateCardsDTO e : dto.getCards()) {
-                Cards w = new Cards();
-                w.setTerm(e.getTerm());
-                w.setDefinition(e.getDefinition());
-                w.setFlashcardSet(flashcardSet);
-                flashcardSet.getCards().add(w);
-            }
+        if (dto.getCards() != null && !dto.getCards().isEmpty()) {
+            flashcardSet.getCards().addAll(mapCards(dto.getCards(), flashcardSet));
         }
 
-        FlashcardSet saved = flashcardSetRepository.save(flashcardSet);
-        return toDTO(saved);
+        return toDTO(flashcardSetRepository.save(flashcardSet));
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Optional<FlashcardSetDTO> getFlashcardSetById(Long id) {
+        lastSeenFlashcardSetService.saveLastSeenSet(id);
         return flashcardSetRepository.findById(id).map(this::toDTO);
     }
 
@@ -89,28 +96,18 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
     @Override
     @Transactional
     public Optional<FlashcardSetDTO> updateFlashcardSet(Long id, CreateFlashcardSetDTO updateDTO) {
-        Optional<FlashcardSet> optionalWordList = flashcardSetRepository.findById(id);
-        if (optionalWordList.isEmpty()) {
-            return Optional.empty();
-        }
+        return flashcardSetRepository.findById(id)
+                .map(flashcardSet -> {
+                    flashcardSet.setName(updateDTO.getName());
 
-        FlashcardSet flashcardSet = optionalWordList.get();
-        flashcardSet.setName(updateDTO.getName());
+                    if (updateDTO.getCards() != null && !updateDTO.getCards().isEmpty()) {
+                        flashcardSet.getCards().clear();
+                        flashcardSet.getCards().addAll(mapCards(updateDTO.getCards(), flashcardSet));
+                    }
 
-        // обновляем СЛОВА ТОЛЬКО если пришёл непустой список
-        if (updateDTO.getCards() != null && !updateDTO.getCards().isEmpty()) {
-            flashcardSet.getCards().clear();
-            for (CreateCardsDTO entryDTO : updateDTO.getCards()) {
-                Cards entry = new Cards();
-                entry.setTerm(entryDTO.getTerm());
-                entry.setDefinition(entryDTO.getDefinition());
-                entry.setFlashcardSet(flashcardSet);
-                flashcardSet.getCards().add(entry);
-            }
-        }
-
-        FlashcardSet updated = flashcardSetRepository.save(flashcardSet);
-        return Optional.of(toDTO(updated));
+                    FlashcardSet updated = flashcardSetRepository.save(flashcardSet);
+                    return toDTO(updated);
+                });
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.sekhanov.flashcard.service.JwtService;
 import com.sekhanov.flashcard.service.UserService;
 import com.sekhanov.flashcard.service.impl.UserServiceImpl;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -104,16 +107,34 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                User user = userRepository.findByLogin(username);
-                if (user == null) {
-                    throw new UsernameNotFoundException("User Not Found");
-                } else {
-                    return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), List.of());
-                }
+        return username -> {
+            User user = userRepository.findByLogin(username);
+            if (user == null) {
+                throw new UsernameNotFoundException("User Not Found");
             }
+            return new CustomUserDetails(user.getId(), user.getLogin(), user.getName(), user.getSurname(), user.getPassword(), List.of());
         };
+    }
+
+    /**
+     * Представляет пользователя с дополнительной информацией: id, имя и фамилия.
+     * <p>
+     * Используется для аутентификации и авторизации в системе.
+     */
+    @Getter
+    public static class CustomUserDetails extends org.springframework.security.core.userdetails.User {
+        private final Long id;
+        private final String name;
+        private final String surname;
+
+        /**
+         * Создаёт объект пользователя с заданными данными и полномочиями.
+         */
+        public CustomUserDetails(Long id, String login, String name, String surname, String password, Collection<? extends GrantedAuthority> authorities) {
+            super(login, password, authorities);
+            this.id = id;
+            this.name = name;
+            this.surname = surname;
+        }
     }
 }

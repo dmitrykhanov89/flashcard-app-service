@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006
+      author: dmitry.khanov
+      changes:
+        - createTable:
+            tableName: last_seen_flashcard_set
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: flashcard_set_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: opened_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: last_seen_flashcard_set
+            columnNames: user_id, flashcard_set_id
+            constraintName: pk_last_seen_flashcard_set
+
+        - addForeignKeyConstraint:
+            baseTableName: last_seen_flashcard_set
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_last_seen_user
+
+        - addForeignKeyConstraint:
+            baseTableName: last_seen_flashcard_set
+            baseColumnNames: flashcard_set_id
+            referencedTableName: flashcard_set
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_last_seen_flashcard_set

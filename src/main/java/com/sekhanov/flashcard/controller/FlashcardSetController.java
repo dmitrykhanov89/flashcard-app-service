@@ -1,9 +1,7 @@
 package com.sekhanov.flashcard.controller;
 
-import com.sekhanov.flashcard.dto.CreateFlashcardSetDTO;
-import com.sekhanov.flashcard.dto.CreateCardsDTO;
-import com.sekhanov.flashcard.dto.FlashcardSetDTO;
-import com.sekhanov.flashcard.dto.CardsDTO;
+import com.sekhanov.flashcard.dto.*;
+import com.sekhanov.flashcard.service.LastSeenFlashcardSetService;
 import com.sekhanov.flashcard.service.UserService;
 import com.sekhanov.flashcard.service.FlashcardSetService;
 import com.sekhanov.flashcard.service.CardsService;
@@ -33,6 +31,7 @@ public class FlashcardSetController {
     private final FlashcardSetService flashcardSetService;
     private final CardsService cardsService;
     private final UserService userService;
+    private final LastSeenFlashcardSetService lastSeenFlashcardSetService;
 
     /**
      * Обрабатывает POST-запрос на создание нового списка слов.
@@ -197,5 +196,15 @@ public class FlashcardSetController {
         if (!flashcardSetService.removeFlashcardSetFromUser(userId, flashcardSetId)) {
             throw new EntityNotFoundException("Пользователь или список слов не найден");
         }
+    }
+
+    /**
+     * Получает список из 10 последних наборов карточек текущего пользователя.
+     *
+     * @return Список DTO последних наборов карточек.
+     */
+    @GetMapping("/LastSeenSets")
+    public List<LastSeenFlashcardSetDto> getLastSeenSets() {
+        return lastSeenFlashcardSetService.getLastSeenSetsForCurrentUser();
     }
 }

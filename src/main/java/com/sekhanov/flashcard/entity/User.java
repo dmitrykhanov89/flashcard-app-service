@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"password", "flashcardSets"})
+@ToString(exclude = {"password", "flashcardSets", "lastSeenFlashcardSets"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
@@ -40,5 +40,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "flashcard_set_id")
     )
     @JsonManagedReference
+    @JsonIgnore
     private Set<FlashcardSet> flashcardSets = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<LastSeenFlashcardSet> lastSeenFlashcardSets = new HashSet<>();
 }

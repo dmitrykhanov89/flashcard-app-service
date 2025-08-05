@@ -3,13 +3,13 @@ package com.sekhanov.flashcard.entity;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import com.sekhanov.flashcard.entity.Cards;
 
 @Entity
 @Table(name = "flashcard_set")
@@ -17,7 +17,7 @@ import com.sekhanov.flashcard.entity.Cards;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"users", "cards"})
+@ToString(exclude = {"users", "cards", "lastSeenFlashcardSets"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FlashcardSet {
 
@@ -40,9 +40,14 @@ public class FlashcardSet {
 
     @ManyToMany(mappedBy = "flashcardSets")
     @JsonBackReference
+    @JsonIgnore
     private Set<User> users = new HashSet<>();
 
     @OneToMany(mappedBy = "flashcardSet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Cards> cards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "flashcardSet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<LastSeenFlashcardSet> lastSeenFlashcardSets = new HashSet<>();
 }

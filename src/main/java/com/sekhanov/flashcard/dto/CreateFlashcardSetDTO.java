@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateFlashcardSetDTO {
     private String name;
+    private String description; // 🔥 вот этого не хватало
     private List<CreateCardsDTO> cards;
     private Long userId;
 }
