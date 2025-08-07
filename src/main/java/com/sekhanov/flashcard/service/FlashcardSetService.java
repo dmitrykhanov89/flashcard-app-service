@@ -68,4 +68,12 @@ public interface FlashcardSetService {
      * @return true, если список был успешно удален; false, если пользователь или список не найдены
      */
     boolean removeFlashcardSetFromUser(Long userId, Long wordListId);
+
+    /**
+     * Получает список наборов карточек, принадлежащих конкретному пользователю (владельцу).
+     *
+     * @param ownerId Идентификатор пользователя-владельца наборов карточек.
+     * @return Список {@link FlashcardSetDTO} наборов карточек, принадлежащих пользователю.
+     */
+    List<FlashcardSetDTO> getFlashcardSetsByOwnerId(Long ownerId);
 }

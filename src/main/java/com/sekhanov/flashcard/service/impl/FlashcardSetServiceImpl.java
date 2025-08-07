@@ -163,6 +163,13 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
         return false;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<FlashcardSetDTO> getFlashcardSetsByOwnerId(Long ownerId) {
+        List<FlashcardSet> sets = flashcardSetRepository.findByOwnerId(ownerId);
+        return sets.stream().map(this::toDTO).toList();
+    }
+
     private FlashcardSetDTO toDTO(FlashcardSet flashcardSet) {
         FlashcardSetDTO dto = new FlashcardSetDTO();
         dto.setId(flashcardSet.getId());

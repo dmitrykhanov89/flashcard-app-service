@@ -207,4 +207,15 @@ public class FlashcardSetController {
     public List<LastSeenFlashcardSetDto> getLastSeenSets() {
         return lastSeenFlashcardSetService.getLastSeenSetsForCurrentUser();
     }
+
+    /**
+     * Получить все наборы карточек, созданные конкретным пользователем (владельцем).
+     *
+     * @param ownerId ID пользователя-владельца.
+     * @return Список DTO наборов карточек.
+     */
+    @GetMapping("/owner/{ownerId}")
+    public List<FlashcardSetDTO> getFlashcardSetsByOwner(@PathVariable Long ownerId) {
+        return flashcardSetService.getFlashcardSetsByOwnerId(ownerId);
+    }
 }
