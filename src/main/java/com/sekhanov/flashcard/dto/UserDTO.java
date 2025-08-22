@@ -1,11 +1,8 @@
 package com.sekhanov.flashcard.dto;
 
-import com.sekhanov.flashcard.entity.FlashcardSet;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
-import java.util.Set;
 
 /**
  * DTO для передачи данных пользователя.

@@ -1,12 +1,8 @@
 package com.sekhanov.flashcard.config;
 
-import com.sekhanov.flashcard.config.JwtFilter;
 import com.sekhanov.flashcard.entity.User;
 import com.sekhanov.flashcard.repository.UserRepository;
 import com.sekhanov.flashcard.service.JwtService;
-import com.sekhanov.flashcard.service.UserService;
-import com.sekhanov.flashcard.service.impl.UserServiceImpl;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +15,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import java.util.Collection;
 import java.util.List;
 

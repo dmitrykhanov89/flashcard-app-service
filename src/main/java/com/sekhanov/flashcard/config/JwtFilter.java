@@ -8,17 +8,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.util.List;
+import java.time.Duration;
+import java.util.Date;
 
 /**
  * Фильтр для проверки JWT токена в заголовке Authorization HTTP-запроса.
@@ -34,6 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private static final long REFRESH_THRESHOLD = Duration.ofMinutes(15).toMillis();
 
     /**
      * Выполняет фильтрацию входящего HTTP-запроса.
@@ -62,6 +60,12 @@ public class JwtFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                Date expiration = jwtService.extractExpiration(token);
+                Date now = new Date();
+                if (expiration.getTime() - now.getTime() <= REFRESH_THRESHOLD) {
+                    String refreshedToken = jwtService.refreshToken(token);
+                    res.setHeader("Authorization", "Bearer " + refreshedToken);
+                }
             }
         }
         chain.doFilter(req, res);

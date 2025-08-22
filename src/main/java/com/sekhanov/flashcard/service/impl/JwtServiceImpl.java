@@ -3,9 +3,11 @@ package com.sekhanov.flashcard.service.impl;
 import com.sekhanov.flashcard.service.JwtService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 
 /**
@@ -25,8 +27,17 @@ import java.util.Date;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long expiration = 3600000; // 1 час
+    @Value("${jwt.secret}")
+    private String secret;
+
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+        // Конвертируем секрет в ключ (ключ должен быть минимум 256 бит)
+        key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+    private final long expiration = Duration.ofHours(1).toMillis(); // 1 час
 
     @Override
     public String generateToken(String login) {
@@ -61,5 +72,21 @@ public class JwtServiceImpl implements JwtService {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    @Override
+    public String refreshToken(String token) {
+        String login = extractLogin(token);
+        return generateToken(login);
+    }
+
+    @Override
+    public Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
     }
 }

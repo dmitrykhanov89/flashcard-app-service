@@ -32,7 +32,8 @@ public class WebConfig {
                         .addMapping("/**")
                         .allowedOrigins("http://localhost:5173")
                         .allowedMethods("*")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .exposedHeaders("Authorization");
             }
         };
     }

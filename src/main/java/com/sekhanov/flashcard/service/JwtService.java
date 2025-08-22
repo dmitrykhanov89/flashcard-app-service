@@ -1,5 +1,6 @@
 package com.sekhanov.flashcard.service;
 
+import java.util.Date;
 /**
  * Сервис для работы с JWT (JSON Web Token).
  * <p>
@@ -26,4 +27,16 @@ public interface JwtService {
      * @return true если валиден, иначе false
      */
     boolean validateToken(String token);
+    /**
+     * Обновляет (рефрешит) JWT токен, создавая новый на основе старого.
+     * @param token текущий JWT токен
+     * @return новый JWT токен с обновлённым временем жизни
+     */
+    String refreshToken(String token);
+    /**
+     * Извлекает дату истечения срока действия токена.
+     * @param token JWT токен
+     * @return дата истечения срока действия токена
+     */
+    Date extractExpiration(String token);
 }
