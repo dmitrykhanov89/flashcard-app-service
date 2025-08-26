@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/005-update-flashcard-set.yaml
   - include:
       file: db/changelog/006-last-seen-flashcard-set.yaml
+  - include:
+      file: db/changelog/007-add-email-to-users.yaml

@@ -40,7 +40,9 @@ public class UserServiceImpl implements UserService {
         user.setName(createUserDTO.getName());
         user.setSurname(createUserDTO.getSurname());
         user.setLogin(createUserDTO.getLogin());
+        user.setEmail(createUserDTO.getEmail());
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+        user.setIsEmailConfirmed(false);
         user = userRepository.save(user);
         return toDTO(user);
     }
@@ -80,6 +82,7 @@ public class UserServiceImpl implements UserService {
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
         dto.setLogin(user.getLogin());
+        dto.setEmail(user.getEmail());
         return dto;
     }
 

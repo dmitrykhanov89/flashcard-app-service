@@ -28,9 +28,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String login;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    @Column(nullable = false)
+    private Boolean isEmailConfirmed = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
