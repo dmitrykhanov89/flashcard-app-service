@@ -98,6 +98,7 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
         return flashcardSetRepository.findById(id)
                 .map(flashcardSet -> {
                     flashcardSet.setName(updateDTO.getName());
+                    flashcardSet.setDescription(updateDTO.getDescription());
 
                     if (updateDTO.getCards() != null && !updateDTO.getCards().isEmpty()) {
                         flashcardSet.getCards().clear();
@@ -173,6 +174,7 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
         FlashcardSetDTO dto = new FlashcardSetDTO();
         dto.setId(flashcardSet.getId());
         dto.setName(flashcardSet.getName());
+        dto.setDescription(flashcardSet.getDescription());
         dto.setCards(flashcardSet.getCards().stream()
                 .map(entry -> new CardsDTO(entry.getId(), entry.getTerm(), entry.getDefinition()))
                 .toList());

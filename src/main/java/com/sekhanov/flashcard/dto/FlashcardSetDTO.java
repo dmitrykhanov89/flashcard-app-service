@@ -17,5 +17,6 @@ import java.util.List;
 public class FlashcardSetDTO {
     private Long id;
     private String name;
+    private String description;
     private List<CardsDTO> cards;
 }
