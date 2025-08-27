@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008
+      author: dmitry.khanov
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: confirmation_token
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true

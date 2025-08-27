@@ -32,5 +32,13 @@ public interface UserService {
      *         пустой Optional, если пользователь не найден или не аутентифицирован.
      */
     Optional<User> findCurrentUserEntity();
+
+    /**
+     * Подтверждает email пользователя по токену.
+     *
+     * @param token токен подтверждения email
+     * @return DTO подтверждённого пользователя или null, если токен некорректный
+     */
+    UserDTO confirmEmail(String token);
 }
 

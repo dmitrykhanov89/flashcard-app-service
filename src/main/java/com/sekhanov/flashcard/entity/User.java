@@ -38,6 +38,9 @@ public class User {
     @Column(nullable = false)
     private Boolean isEmailConfirmed = false;
 
+    @Column(name = "confirmation_token", unique = true)
+    private String confirmationToken;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_flashcard_set",

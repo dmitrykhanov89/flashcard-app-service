@@ -52,19 +52,25 @@ public class AuthController {
     }
 
     /**
-     * Обрабатывает POST-запрос на регистрацию нового пользователя.
-     * <p>
-     * Принимает данные нового пользователя в виде {@link CreateUserDTO},
-     * создает пользователя через сервис {@link UserService} и возвращает
-     * DTO созданного пользователя с HTTP статусом 201 Created.
-     * </p>
-     *
-     * @param createUserDTO объект {@link CreateUserDTO}, содержащий данные для создания пользователя.
-     * @return {@link ResponseEntity} с объектом {@link UserDTO} и статусом 201 Created.
+     * Регистрация нового пользователя с отправкой письма для подтверждения email.
      */
     @PostMapping("/registration")
     public ResponseEntity<UserDTO> registration(@RequestBody CreateUserDTO createUserDTO) {
         UserDTO userDTO = userService.createUser(createUserDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
+
+    /**
+     * Подтверждение email пользователя по токену.
+     *
+     * @param token токен подтверждения, переданный в ссылке email
+     */
+    @GetMapping("/confirm-email")
+    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
+        UserDTO userDTO = userService.confirmEmail(token);
+        if (userDTO == null) {
+            return ResponseEntity.badRequest().body("Некорректный или уже использованный токен");
+        }
+        return ResponseEntity.ok("Email подтверждён успешно!");
     }
 }

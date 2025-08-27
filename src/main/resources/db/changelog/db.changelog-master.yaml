@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/006-last-seen-flashcard-set.yaml
   - include:
       file: db/changelog/007-add-email-to-users.yaml
+  - include:
+      file: db/changelog/008-add-confirmation_token-to-users.yaml

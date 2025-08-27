@@ -5,6 +5,7 @@ import com.sekhanov.flashcard.dto.CreateUserDTO;
 import com.sekhanov.flashcard.dto.UserDTO;
 import com.sekhanov.flashcard.entity.User;
 import com.sekhanov.flashcard.repository.UserRepository;
+import com.sekhanov.flashcard.service.MailService;
 import com.sekhanov.flashcard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * <p>
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Override
     @Transactional
@@ -43,7 +46,16 @@ public class UserServiceImpl implements UserService {
         user.setEmail(createUserDTO.getEmail());
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
         user.setIsEmailConfirmed(false);
+        // Генерация токена подтверждения email
+        String token = UUID.randomUUID().toString();
+        user.setConfirmationToken(token);
         user = userRepository.save(user);
+        // Отправка письма с ссылкой подтверждения
+        String confirmLink = "http://localhost:8080/api/auth/confirm-email?token=" + token;
+        String message = "Привет!<br>" +
+                "Для подтверждения email перейдите по ссылке: " +
+                "<a href=\"" + confirmLink + "\">" + confirmLink + "</a>";
+        mailService.sendMail(user.getEmail(), "Подтверждение email", message);
         return toDTO(user);
     }
 
@@ -75,6 +87,21 @@ public class UserServiceImpl implements UserService {
         String login = authentication.getName();
         return Optional.ofNullable(userRepository.findByLogin(login));
     }
+
+    @Override
+    @Transactional
+    public UserDTO confirmEmail(String token) {
+        Optional<User> optionalUser = userRepository.findByConfirmationToken(token);
+        if (optionalUser.isEmpty()) {
+            return null; // токен некорректный
+        }
+        User user = optionalUser.get();
+        user.setIsEmailConfirmed(true);
+        user.setConfirmationToken(null);
+        userRepository.save(user);
+        return toDTO(user);
+    }
+
     // Преобразование User в UserDTO
     private UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
