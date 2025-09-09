@@ -1,0 +1,646 @@
+databaseChangeLog:
+  - changeSet:
+      id: flashcard_set_1
+      author: dmitry.khanov
+      changes:
+        - insert:
+            tableName: flashcard_set
+            columns:
+              - column: { name: name, value: "English Basics" }
+              - column: { name: owner_id, valueComputed: "(SELECT id FROM users WHERE login='admin')" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "apple" }
+              - column: { name: definition, value: "яблоко" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "book" }
+              - column: { name: definition, value: "книга" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "tree" }
+              - column: { name: definition, value: "дерево" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "cat" }
+              - column: { name: definition, value: "кот" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "dog" }
+              - column: { name: definition, value: "собака" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "house" }
+              - column: { name: definition, value: "дом" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "car" }
+              - column: { name: definition, value: "машина" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "sun" }
+              - column: { name: definition, value: "солнце" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "moon" }
+              - column: { name: definition, value: "луна" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "water" }
+              - column: { name: definition, value: "вода" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "fire" }
+              - column: { name: definition, value: "огонь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "earth" }
+              - column: { name: definition, value: "земля" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "air" }
+              - column: { name: definition, value: "воздух" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "school" }
+              - column: { name: definition, value: "школа" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "pen" }
+              - column: { name: definition, value: "ручка" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "table" }
+              - column: { name: definition, value: "стол" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "chair" }
+              - column: { name: definition, value: "стул" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "window" }
+              - column: { name: definition, value: "окно" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "door" }
+              - column: { name: definition, value: "дверь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='English Basics')" }
+              - column: { name: term, value: "phone" }
+              - column: { name: definition, value: "телефон" }
+  - changeSet:
+      id: flashcard_set_2
+      author: dmitry.khanov
+      changes:
+        - insert:
+            tableName: flashcard_set
+            columns:
+              - column: { name: name, value: "Biology" }
+              - column: { name: owner_id, valueComputed: "(SELECT id FROM users WHERE login='admin')" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "sparrow" }
+              - column: { name: definition, value: "воробей" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "eagle" }
+              - column: { name: definition, value: "орёл" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "oak" }
+              - column: { name: definition, value: "дуб" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "maple" }
+              - column: { name: definition, value: "клён" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "rose" }
+              - column: { name: definition, value: "роза" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "lion" }
+              - column: { name: definition, value: "лев" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "tiger" }
+              - column: { name: definition, value: "тигр" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "whale" }
+              - column: { name: definition, value: "кит" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "shark" }
+              - column: { name: definition, value: "акула" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "frog" }
+              - column: { name: definition, value: "жаба" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "butterfly" }
+              - column: { name: definition, value: "бабочка" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "bee" }
+              - column: { name: definition, value: "пчела" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "cat" }
+              - column: { name: definition, value: "кот" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "dog" }
+              - column: { name: definition, value: "собака" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "horse" }
+              - column: { name: definition, value: "лошадь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "cow" }
+              - column: { name: definition, value: "корова" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "sheep" }
+              - column: { name: definition, value: "овца" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "pig" }
+              - column: { name: definition, value: "свинья" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "goat" }
+              - column: { name: definition, value: "козёл" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Biology')" }
+              - column: { name: term, value: "duck" }
+              - column: { name: definition, value: "утка" }
+  - changeSet:
+      id: flashcard_set_3
+      author: dmitry.khanov
+      changes:
+        - insert:
+            tableName: flashcard_set
+            columns:
+              - column: { name: name, value: "Mathematics" }
+              - column: { name: owner_id, valueComputed: "(SELECT id FROM users WHERE login='admin')" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "addition" }
+              - column: { name: definition, value: "сложение" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "subtraction" }
+              - column: { name: definition, value: "вычитание" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "multiplication" }
+              - column: { name: definition, value: "умножение" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "division" }
+              - column: { name: definition, value: "деление" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "fraction" }
+              - column: { name: definition, value: "дробь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "decimal" }
+              - column: { name: definition, value: "десятичная дробь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "percent" }
+              - column: { name: definition, value: "процент" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "algebra" }
+              - column: { name: definition, value: "алгебра" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "geometry" }
+              - column: { name: definition, value: "геометрия" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "circle" }
+              - column: { name: definition, value: "окружность" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "triangle" }
+              - column: { name: definition, value: "треугольник" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "square" }
+              - column: { name: definition, value: "квадрат" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "angle" }
+              - column: { name: definition, value: "угол" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "line" }
+              - column: { name: definition, value: "линия" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "point" }
+              - column: { name: definition, value: "точка" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "plane" }
+              - column: { name: definition, value: "плоскость" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "volume" }
+              - column: { name: definition, value: "объём" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "area" }
+              - column: { name: definition, value: "площадь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "perimeter" }
+              - column: { name: definition, value: "периметр" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Mathematics')" }
+              - column: { name: term, value: "equation" }
+              - column: { name: definition, value: "уравнение" }
+  - changeSet:
+      id: flashcard_set_4
+      author: dmitry.khanov
+      changes:
+        - insert:
+            tableName: flashcard_set
+            columns:
+              - column: { name: name, value: "Physics" }
+              - column: { name: owner_id, valueComputed: "(SELECT id FROM users WHERE login='admin')" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "force" }
+              - column: { name: definition, value: "сила" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "energy" }
+              - column: { name: definition, value: "энергия" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "work" }
+              - column: { name: definition, value: "работа" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "power" }
+              - column: { name: definition, value: "мощность" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "mass" }
+              - column: { name: definition, value: "масса" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "weight" }
+              - column: { name: definition, value: "вес" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "speed" }
+              - column: { name: definition, value: "скорость" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "velocity" }
+              - column: { name: definition, value: "скорость с направлением" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "acceleration" }
+              - column: { name: definition, value: "ускорение" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "momentum" }
+              - column: { name: definition, value: "импульс" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "gravity" }
+              - column: { name: definition, value: "гравитация" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "friction" }
+              - column: { name: definition, value: "трение" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "pressure" }
+              - column: { name: definition, value: "давление" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "temperature" }
+              - column: { name: definition, value: "температура" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "voltage" }
+              - column: { name: definition, value: "напряжение" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "current" }
+              - column: { name: definition, value: "ток" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "resistance" }
+              - column: { name: definition, value: "сопротивление" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "magnet" }
+              - column: { name: definition, value: "магнит" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "wave" }
+              - column: { name: definition, value: "волна" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Physics')" }
+              - column: { name: term, value: "light" }
+              - column: { name: definition, value: "свет" }
+  - changeSet:
+      id: flashcard_set_5
+      author: dmitry.khanov
+      changes:
+        - insert:
+            tableName: flashcard_set
+            columns:
+              - column: { name: name, value: "Miscellaneous" }
+              - column: { name: owner_id, valueComputed: "(SELECT id FROM users WHERE login='admin')" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "computer" }
+              - column: { name: definition, value: "компьютер" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "keyboard" }
+              - column: { name: definition, value: "клавиатура" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "mouse" }
+              - column: { name: definition, value: "мышь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "screen" }
+              - column: { name: definition, value: "экран" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "chair" }
+              - column: { name: definition, value: "стул" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "table" }
+              - column: { name: definition, value: "стол" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "book" }
+              - column: { name: definition, value: "книга" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "pen" }
+              - column: { name: definition, value: "ручка" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "phone" }
+              - column: { name: definition, value: "телефон" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "lamp" }
+              - column: { name: definition, value: "лампа" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "window" }
+              - column: { name: definition, value: "окно" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "door" }
+              - column: { name: definition, value: "дверь" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "bag" }
+              - column: { name: definition, value: "сумка" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "watch" }
+              - column: { name: definition, value: "часы" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "glasses" }
+              - column: { name: definition, value: "очки" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "notebook" }
+              - column: { name: definition, value: "блокнот" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "pencil" }
+              - column: { name: definition, value: "карандаш" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "ruler" }
+              - column: { name: definition, value: "линейка" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "eraser" }
+              - column: { name: definition, value: "ластик" }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: flashcard_set_id, valueComputed: "(SELECT id FROM flashcard_set WHERE name='Miscellaneous')" }
+              - column: { name: term, value: "backpack" }
+              - column: { name: definition, value: "рюкзак" }

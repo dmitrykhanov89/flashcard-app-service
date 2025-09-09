@@ -15,3 +15,11 @@ databaseChangeLog:
       file: db/changelog/007-add-email-to-users.yaml
   - include:
       file: db/changelog/008-add-confirmation_token-to-users.yaml
+  - include:
+      file: db/changelog/009-add-users-to-table.yaml
+  - include:
+      file: db/changelog/010-add-flashcard-to-admin.yaml
+  - include:
+      file: db/changelog/011-add-flashcard-to-user1.yaml
+  - include:
+      file: db/changelog/012-add-flashcard-to-user2.yaml
