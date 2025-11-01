@@ -36,4 +36,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	jvmArgs "-javaagent:${configurations.testRuntimeClasspath.files.find { it.name.contains('mockito-core') }}",
+			"-XX:+EnableDynamicAgentLoading"
 }
