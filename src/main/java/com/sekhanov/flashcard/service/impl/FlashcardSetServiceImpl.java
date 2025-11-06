@@ -9,6 +9,7 @@ import com.sekhanov.flashcard.repository.FlashcardSetRepository;
 import com.sekhanov.flashcard.service.FlashcardSetService;
 import com.sekhanov.flashcard.service.LastSeenFlashcardSetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Optional;
  *     <li>Удаление списка слов у пользователя</li>
  * </ul>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlashcardSetServiceImpl implements FlashcardSetService {
@@ -54,8 +56,12 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
     @Override
     @Transactional
     public FlashcardSetDTO createFlashcardSet(CreateFlashcardSetDTO dto) {
-        User owner = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        log.debug("Попытка создать набор карточек для пользователя id={}", dto.getUserId());
+
+        User owner = userRepository.findById(dto.getUserId()).orElseThrow(() -> {
+                    log.warn("Не найден пользователь с id={}", dto.getUserId());
+                    return new IllegalArgumentException("User not found");
+                });
 
         FlashcardSet flashcardSet = new FlashcardSet();
         flashcardSet.setName(dto.getName());
@@ -68,33 +74,48 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
             flashcardSet.getCards().addAll(mapCards(dto.getCards(), flashcardSet));
         }
 
-        return toDTO(flashcardSetRepository.save(flashcardSet));
+        FlashcardSet saved = flashcardSetRepository.save(flashcardSet);
+        log.info("Создан набор карточек id={} для пользователя id={}", saved.getId(), owner.getId());
+
+        return toDTO(saved);
     }
 
     @Override
     @Transactional
     public Optional<FlashcardSetDTO> getFlashcardSetById(Long id) {
+        log.debug("Получение набора карточек по id={}", id);
         lastSeenFlashcardSetService.saveLastSeenSet(id);
-        return flashcardSetRepository.findById(id).map(this::toDTO);
+        return flashcardSetRepository.findById(id)
+                .map(set -> {
+                    log.debug("Найден набор карточек: {}", set.getName());
+                    return toDTO(set);
+                });
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<FlashcardSetDTO> getFlashcardSetByName(String name) {
+        log.debug("Поиск набора карточек по имени={}", name);
         FlashcardSet flashcardSet = flashcardSetRepository.findByName(name);
-        return Optional.ofNullable(flashcardSet).map(this::toDTO);
+        if (flashcardSet == null) {
+            log.warn("Набор карточек с именем '{}' не найден", name);
+            return Optional.empty();
+        }
+        return Optional.of(toDTO(flashcardSet));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<FlashcardSetDTO> getAllFlashcardSet() {
         List<FlashcardSet> flashcardSets = flashcardSetRepository.findAll();
+        log.debug("Получено {} наборов карточек", flashcardSets.size());
         return flashcardSets.stream().map(this::toDTO).toList();
     }
 
     @Override
     @Transactional
     public Optional<FlashcardSetDTO> updateFlashcardSet(Long id, CreateFlashcardSetDTO updateDTO) {
+        log.debug("Обновление набора карточек id={}", id);
         return flashcardSetRepository.findById(id)
                 .map(flashcardSet -> {
                     flashcardSet.setName(updateDTO.getName());
@@ -103,9 +124,11 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
                     if (updateDTO.getCards() != null && !updateDTO.getCards().isEmpty()) {
                         flashcardSet.getCards().clear();
                         flashcardSet.getCards().addAll(mapCards(updateDTO.getCards(), flashcardSet));
+                        log.trace("Набор с id={} обновился со следующим набором карточек {}", id, updateDTO.getCards());
                     }
 
                     FlashcardSet updated = flashcardSetRepository.save(flashcardSet);
+                    log.info("Набор карточек id={} успешно обновлён", updated.getId());
                     return toDTO(updated);
                 });
     }
@@ -115,58 +138,73 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
     public boolean deleteFlashcardSet(Long id) {
         if (flashcardSetRepository.existsById(id)) {
             flashcardSetRepository.deleteById(id);
+            log.info("Удалён набор карточек id={}", id);
             return true;
+        } else {
+            log.warn("Попытка удалить несуществующий набор карточек id={}", id);
+            return false;
         }
-        return false;
     }
 
     @Override
     @Transactional
     public boolean addFlashcardSetToUser(Long userId, Long wordListId) {
+        log.debug("Добавление набора карточек id={} пользователю id={}", wordListId, userId);
+
         Optional<User> optionalUser = userRepository.findById(userId);
         Optional<FlashcardSet> optionalWordList = flashcardSetRepository.findById(wordListId);
 
-        if (optionalUser.isPresent() && optionalWordList.isPresent()) {
-            User user = optionalUser.get();
-            FlashcardSet flashcardSet = optionalWordList.get();
-
-            // Избегаем повторного добавления
-            if (!user.getFlashcardSets().contains(flashcardSet)) {
-                user.getFlashcardSets().add(flashcardSet);
-                userRepository.save(user);
-            }
-
-            return true;
+        if (optionalUser.isEmpty() || optionalWordList.isEmpty()) {
+            log.warn("Не удалось добавить набор: пользователь или набор не найден (userId={}, setId={})", userId, wordListId);
+            return false;
         }
 
-        return false;
+        User user = optionalUser.get();
+        FlashcardSet flashcardSet = optionalWordList.get();
+
+        if (!user.getFlashcardSets().contains(flashcardSet)) {
+            user.getFlashcardSets().add(flashcardSet);
+            userRepository.save(user);
+            log.info("Набор карточек id={} добавлен пользователю id={}", wordListId, userId);
+        } else {
+            log.debug("Набор карточек id={} уже привязан к пользователю id={}", wordListId, userId);
+        }
+
+        return true;
     }
 
     @Override
     @Transactional
     public boolean removeFlashcardSetFromUser(Long userId, Long wordListId) {
+        log.debug("Удаление набора карточек id={} у пользователя id={}", wordListId, userId);
+
         Optional<User> optionalUser = userRepository.findById(userId);
         Optional<FlashcardSet> optionalWordList = flashcardSetRepository.findById(wordListId);
 
-        if (optionalUser.isPresent() && optionalWordList.isPresent()) {
-            User user = optionalUser.get();
-            FlashcardSet flashcardSet = optionalWordList.get();
-
-            if (user.getFlashcardSets().contains(flashcardSet)) {
-                user.getFlashcardSets().remove(flashcardSet);
-                userRepository.save(user);
-            }
-
-            return true;
+        if (optionalUser.isEmpty() || optionalWordList.isEmpty()) {
+            log.warn("Не удалось удалить набор: пользователь или набор не найден (userId={}, setId={})", userId, wordListId);
+            return false;
         }
 
-        return false;
+        User user = optionalUser.get();
+        FlashcardSet flashcardSet = optionalWordList.get();
+
+        if (user.getFlashcardSets().contains(flashcardSet)) {
+            user.getFlashcardSets().remove(flashcardSet);
+            userRepository.save(user);
+            log.info("Набор карточек id={} удалён у пользователя id={}", wordListId, userId);
+        } else {
+            log.debug("У пользователя id={} не найден набор карточек id={}", userId, wordListId);
+        }
+
+        return true;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<FlashcardSetDTO> getFlashcardSetsByOwnerId(Long ownerId) {
         List<FlashcardSet> sets = flashcardSetRepository.findByOwnerId(ownerId);
+        log.debug("Найдено {} наборов карточек для владельца id={}", sets.size(), ownerId);
         return sets.stream().map(this::toDTO).toList();
     }
 

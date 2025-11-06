@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: flashcard
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flashcard_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    platform: postgres
+
+  mail:
+    host: localhost
+    port: 1025
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+          ssl:
+            enable: false
+    default-encoding: UTF-8
+
+#logging:
+#  level:
+#    root: INFO
+#    com.sekhanov.flashcard: DEBUG
+#    liquibase: INFO
+
+logging:
+  level:
+    root: INFO
+#    com.sekhanov.flashcard: DEBUG
+    com.sekhanov.flashcard: TRACE
+#    liquibase: DEBUG
+  pattern:
+    console: "%cyan(%d{HH:mm:ss}) %highlight(%-5level) %green([%thread]) %blue(%logger{36}) : %msg%n"
+
+
+jwt:
+  secret: 3c8f9d5e2a1b4c7d9f8e6a1b3c7d4e5f6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9

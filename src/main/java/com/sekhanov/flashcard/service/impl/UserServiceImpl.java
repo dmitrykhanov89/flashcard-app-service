@@ -8,6 +8,7 @@ import com.sekhanov.flashcard.repository.UserRepository;
 import com.sekhanov.flashcard.service.MailService;
 import com.sekhanov.flashcard.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,7 @@ import java.util.UUID;
  *     <li>Преобразование сущности {@link User} в {@link UserDTO}</li>
  * </ul>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -38,79 +40,100 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO createUser(CreateUserDTO createUserDTO) {
+    public UserDTO createUser(CreateUserDTO dto) {
+        log.debug("Создание пользователя с логином '{}' и email '{}'", dto.getLogin(), dto.getEmail());
+
+        if (userRepository.findByLogin(dto.getLogin()) != null) {
+            log.warn("Пользователь с логином '{}' уже существует", dto.getLogin());
+            throw new IllegalArgumentException("Пользователь с таким логином уже существует");
+        }
+
         User user = new User();
-        user.setName(createUserDTO.getName());
-        user.setSurname(createUserDTO.getSurname());
-        user.setLogin(createUserDTO.getLogin());
-        user.setEmail(createUserDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+        user.setName(dto.getName());
+        user.setSurname(dto.getSurname());
+        user.setLogin(dto.getLogin());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setIsEmailConfirmed(false);
-        // Генерация токена подтверждения email
+
         String token = UUID.randomUUID().toString();
         user.setConfirmationToken(token);
+
         user = userRepository.save(user);
-        // Отправка письма с ссылкой подтверждения
-        String confirmLink = "http://localhost:8080/api/auth/confirm-email?token=" + token;
-        String message = "Привет!<br>" +
-                "Для подтверждения email перейдите по ссылке: " +
-                "<a href=\"" + confirmLink + "\">" + confirmLink + "</a>";
-        mailService.sendMail(user.getEmail(), "Подтверждение email", message);
+        log.info("Создан новый пользователь id={} login={} email={}", user.getId(), user.getLogin(), user.getEmail());
+
+        try {
+            String confirmLink = "http://localhost:8080/api/auth/confirm-email?token=" + token;
+            String message = "<p>Для подтверждения email перейдите по ссылке:</p>" +
+                    "<a href=\"" + confirmLink + "\">Подтвердить email</a>";
+            mailService.sendMail(dto.getEmail(), "Подтверждение email", message);
+            log.debug("Письмо с подтверждением отправлено для email={}", dto.getEmail());
+        } catch (Exception e) {
+            log.error("Ошибка при отправке письма для email={}", dto.getEmail(), e);
+            throw new MailServiceException("Не удалось отправить письмо подтверждения", e);
+        }
+
         return toDTO(user);
     }
 
     @Override
     public UserDTO getCurrentUser() {
-        SecurityConfig.CustomUserDetails currentUser = (SecurityConfig.CustomUserDetails) SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getPrincipal();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        UserDTO dto = new UserDTO();
-        dto.setId(currentUser.getId());
-        dto.setLogin(currentUser.getUsername());
-        dto.setName(currentUser.getName());
-        dto.setSurname(currentUser.getSurname());
-        return dto;
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            log.warn("Попытка получить текущего пользователя без авторизации");
+            throw new IllegalStateException("Пользователь не аутентифицирован");
+        }
+
+        SecurityConfig.CustomUserDetails userDetails = (SecurityConfig.CustomUserDetails) auth.getPrincipal();
+        log.info("Текущий пользователь: id={}, login={}", userDetails.getId(), userDetails.getUsername());
+
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return toDTO(user);
     }
 
     @Override
     public Optional<User> findCurrentUserEntity() {
-        return findAuthenticatedUser();
-    }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    private Optional<User> findAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getName().equals("anonymousUser")) {
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            log.debug("Пользователь не аутентифицирован — возвращаем Optional.empty()");
             return Optional.empty();
         }
-        String login = authentication.getName();
+
+        String login = auth.getName();
+        log.debug("Получение сущности пользователя с логином '{}'", login);
         return Optional.ofNullable(userRepository.findByLogin(login));
     }
 
     @Override
     @Transactional
     public UserDTO confirmEmail(String token) {
+        log.debug("Подтверждение email по токену {}", token);
+
         Optional<User> optionalUser = userRepository.findByConfirmationToken(token);
         if (optionalUser.isEmpty()) {
-            return null; // токен некорректный
+            log.warn("Неверный токен подтверждения: {}", token);
+            throw new IllegalArgumentException("Неверный токен подтверждения");
         }
+
         User user = optionalUser.get();
         user.setIsEmailConfirmed(true);
         user.setConfirmationToken(null);
         userRepository.save(user);
+
+        log.info("Email успешно подтверждён для пользователя login={}", user.getLogin());
         return toDTO(user);
     }
 
-    // Преобразование User в UserDTO
     private UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
         dto.setLogin(user.getLogin());
-        dto.setEmail(user.getEmail());
         return dto;
     }
-
 }

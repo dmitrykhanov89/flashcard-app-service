@@ -2,6 +2,7 @@ package com.sekhanov.flashcard.controller;
 
 import com.sekhanov.flashcard.dto.MailDto;
 import com.sekhanov.flashcard.service.MailService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class MailController {
      * @return {@link ResponseEntity} с сообщением об успешной отправке
      */
     @PostMapping("/send")
-    public ResponseEntity<String> sendEmail(@RequestBody MailDto mailDto) {
+    public ResponseEntity<String> sendEmail(@RequestBody MailDto mailDto) throws MessagingException {
         mailService.sendMail(mailDto.getEmail(), mailDto.getSubject(), mailDto.getMessage());
         return ResponseEntity.ok("Email отправлен!");
     }

@@ -4,6 +4,7 @@ import com.sekhanov.flashcard.service.JwtService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.security.Key;
@@ -24,69 +25,85 @@ import java.util.Date;
  *     <li>Проверка подлинности и срока действия токена</li>
  * </ul>
  */
+@Slf4j
 @Service
 public class JwtServiceImpl implements JwtService {
 
     @Value("${jwt.secret}")
     private String secret;
-
     private Key key;
+    private final long expiration = Duration.ofHours(1).toMillis(); // 1 час
 
     @PostConstruct
     public void init() {
-        // Конвертируем секрет в ключ (ключ должен быть минимум 256 бит)
+        log.debug("Инициализация JwtServiceImpl с секретом длиной {} символов", secret.length());
         key = Keys.hmacShaKeyFor(secret.getBytes());
+        log.info("JWT ключ успешно инициализирован");
     }
-    private final long expiration = Duration.ofHours(1).toMillis(); // 1 час
 
     @Override
     public String generateToken(String login) {
+        log.debug("Генерация JWT токена для login={}", login);
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expiration);
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(login)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key)
                 .compact();
+        log.info("JWT токен успешно создан для login={}", login);
+        return token;
     }
 
     @Override
     public String extractLogin(String token) {
-        return Jwts.parserBuilder()
+        log.debug("Извлечение логина из токена");
+        String login = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+        log.trace("Из токена извлечён login={}", login);
+        return login;
     }
 
     @Override
     public boolean validateToken(String token) {
+        log.debug("Проверка валидности JWT токена");
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+            log.trace("JWT токен действителен");
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            log.warn("JWT токен недействителен: {}", e.getMessage());
             return false;
         }
     }
 
     @Override
     public String refreshToken(String token) {
+        log.debug("Обновление JWT токена");
         String login = extractLogin(token);
-        return generateToken(login);
+        String newToken = generateToken(login);
+        log.info("JWT токен успешно обновлён для login={}", login);
+        return newToken;
     }
 
     @Override
     public Date extractExpiration(String token) {
-        return Jwts.parserBuilder()
+        log.debug("Извлечение времени истечения из токена");
+        Date expirationDate = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
+        log.trace("Токен истекает {}", expirationDate);
+        return expirationDate;
     }
 }

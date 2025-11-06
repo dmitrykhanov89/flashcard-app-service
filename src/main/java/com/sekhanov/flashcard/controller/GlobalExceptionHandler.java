@@ -1,5 +1,6 @@
 package com.sekhanov.flashcard.controller;
 
+import com.sekhanov.flashcard.service.impl.MailServiceException;
 import jakarta.persistence.EntityNotFoundException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleBadCredentials(BadCredentialsException ex) {
         String message = "Неверный логин или пароль";
         return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MailServiceException.class)
+    public ResponseEntity<Object> handleNotFound(MailServiceException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

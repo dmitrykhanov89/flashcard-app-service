@@ -1,5 +1,7 @@
 package com.sekhanov.flashcard.service;
 
+import jakarta.mail.MessagingException;
+
 /**
  * Сервисный интерфейс для отправки электронных писем.
  * <p>
@@ -15,5 +17,5 @@ public interface MailService {
      * @param subject      тема письма
      * @param message      текст письма
      */
-    void sendMail(String emailAddress, String subject, String message);
+    void sendMail(String emailAddress, String subject, String message) throws MessagingException;
 }
