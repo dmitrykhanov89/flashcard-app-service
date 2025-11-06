@@ -2,9 +2,7 @@ package com.sekhanov.flashcard.controller;
 
 import com.sekhanov.flashcard.dto.*;
 import com.sekhanov.flashcard.service.LastSeenFlashcardSetService;
-import com.sekhanov.flashcard.service.UserService;
 import com.sekhanov.flashcard.service.FlashcardSetService;
-import com.sekhanov.flashcard.service.CardsService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,8 +26,6 @@ import java.util.List;
 public class FlashcardSetController {
 
     private final FlashcardSetService flashcardSetService;
-    private final CardsService cardsService;
-    private final UserService userService;
     private final LastSeenFlashcardSetService lastSeenFlashcardSetService;
 
     /**
@@ -50,19 +46,6 @@ public class FlashcardSetController {
     }
 
     /**
-     * Создает новое слово в списке слов с указанным идентификатором.
-     *
-     * @param flashcardSetId ID списка слов, к которому добавляется слово.
-     * @param dto   DTO с данными нового слова.
-     * @return ResponseEntity с созданным словом и статусом 201 Created.
-     */
-    @PostMapping("/{flashcardSetId}/cards")
-    @ResponseStatus(HttpStatus.CREATED)
-    public CardsDTO createCards(@PathVariable Long flashcardSetId, @RequestBody CreateCardsDTO dto) {
-        return cardsService.createCards(flashcardSetId, dto);
-    }
-
-    /**
      * Получает список слов по его ID.
      *
      * @param id ID списка слов.
@@ -72,51 +55,6 @@ public class FlashcardSetController {
     public FlashcardSetDTO getFlashcardSetById(@PathVariable Long id) {
         return flashcardSetService.getFlashcardSetById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Список слов с id " + id + " не найден"));
-    }
-
-    /**
-     * Получает слово по его ID.
-     *
-     * @param id ID слова.
-     * @return ResponseEntity с DTO слова или статусом 404, если слово не найдено.
-     */
-    @GetMapping("/{flashcardSetId}/cards/{id}")
-    public CardsDTO getCardsById(@PathVariable Long id) {
-        return cardsService.getCardsById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Слово с id " + id + " не найдено"));
-    }
-
-    /**
-     * Получает список слов по имени.
-     *
-     * @param name Имя списка слов.
-     * @return ResponseEntity с DTO списка слов или статусом 404, если список не найден.
-     */
-    @GetMapping("/name/{name}")
-    public FlashcardSetDTO getFlashcardSetByName(@PathVariable String name) {
-        return flashcardSetService.getFlashcardSetByName(name)
-                .orElseThrow(() -> new EntityNotFoundException("Список слов с именем '" + name + "' не найден"));
-    }
-
-    /**
-     * Получает все списки слов.
-     *
-     * @return ResponseEntity со списком DTO всех списков слов.
-     */
-    @GetMapping
-    public List<FlashcardSetDTO> getAllFlashcardSet() {
-        return flashcardSetService.getAllFlashcardSet();
-    }
-
-    /**
-     * Получает все слова для указанного списка слов.
-     *
-     * @param flashcardSetId ID списка слов.
-     * @return Список DTO всех слов в списке.
-     */
-    @GetMapping("/{flashcardSetId}/cards")
-    public List<CardsDTO> getAllCardsForFlashcardSet(@PathVariable Long flashcardSetId) {
-        return cardsService.getAllCardsForFlashcardSet(flashcardSetId);
     }
 
     /**
@@ -133,19 +71,6 @@ public class FlashcardSetController {
     }
 
     /**
-     * Обновляет слово с указанным ID.
-     *
-     * @param id       ID слова для обновления.
-     * @param dto DTO с новыми данными слова.
-     * @return ResponseEntity с обновленным DTO слова или статусом 404, если слово не найдено.
-     */
-    @PutMapping("/{flashcardSetId}/cards/{id}")
-    public CardsDTO updateCards(@PathVariable Long id, @RequestBody CreateCardsDTO dto) {
-        return cardsService.updateCards(id, dto)
-                .orElseThrow(() -> new EntityNotFoundException("Слово с id " + id + " не найдено"));
-    }
-
-    /**
      * Удаляет список слов по ID.
      *
      * @param id ID списка слов для удаления.
@@ -155,45 +80,6 @@ public class FlashcardSetController {
     public void deleteFlashcardSet(@PathVariable Long id) {
         if (!flashcardSetService.deleteFlashcardSet(id)) {
             throw new EntityNotFoundException("Список слов с id " + id + " не найден");
-        }
-    }
-
-    /**
-     * Удаляет слово по ID.
-     *
-     * @param id ID слова для удаления.
-     */
-    @DeleteMapping("/{flashcardSetId}/cards/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCards(@PathVariable Long id) {
-        if (!cardsService.deleteCards(id)) {
-            throw new EntityNotFoundException("Слово с id " + id + " не найдено");
-        }
-    }
-
-    /**
-     * Добавляет список слов к пользователю.
-     *
-     * @param userId     ID пользователя.
-     * @param flashcardSetId ID списка слов.
-     */
-    @PostMapping("/{userId}/add/{flashcardSetId}")
-    public void addFlashcardSetToUser(@PathVariable Long userId, @PathVariable Long flashcardSetId) {
-        if (!flashcardSetService.addFlashcardSetToUser(userId, flashcardSetId)) {
-            throw new EntityNotFoundException("Пользователь или список слов не найден");
-        }
-    }
-
-    /**
-     * Удаляет список слов у пользователя.
-     *
-     * @param userId     ID пользователя.
-     * @param flashcardSetId ID списка слов.
-     */
-    @DeleteMapping("/{userId}/remove/{flashcardSetId}")
-    public void removeFlashcardSetFromUser(@PathVariable Long userId, @PathVariable Long flashcardSetId) {
-        if (!flashcardSetService.removeFlashcardSetFromUser(userId, flashcardSetId)) {
-            throw new EntityNotFoundException("Пользователь или список слов не найден");
         }
     }
 

@@ -32,9 +32,12 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	testImplementation("com.h2database:h2:2.3.232")
 }
 
 tasks.named('test') {
+	jvmArgs += "-Xshare:off"
 	useJUnitPlatform()
 	jvmArgs "-javaagent:${configurations.testRuntimeClasspath.files.find { it.name.contains('mockito-core') }}",
 			"-XX:+EnableDynamicAgentLoading"
