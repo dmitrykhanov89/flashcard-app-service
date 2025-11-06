@@ -38,6 +38,13 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    // Пути, которые должны быть доступны без аутентификации для Swagger
+    private static final String[] WHITE_LIST_URLS = {
+            "/api/auth/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+    };
+
     /**
      * Конфигурирует {@link SecurityFilterChain}, определяющую правила безопасности HTTP-запросов.
      * <ul>
@@ -62,7 +69,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(WHITE_LIST_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
