@@ -12,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -38,7 +40,6 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    // Пути, которые должны быть доступны без аутентификации для Swagger
     private static final String[] WHITE_LIST_URLS = {
             "/api/auth/**",
             "/swagger-ui/**",
@@ -48,10 +49,10 @@ public class SecurityConfig {
     /**
      * Конфигурирует {@link SecurityFilterChain}, определяющую правила безопасности HTTP-запросов.
      * <ul>
-     *     <li>Отключает CSRF-защиту (так как используется stateless с JWT)</li>
+     *     <li>Включает CSRF-защиту и хранит токен в куках, чтобы клиентский JS мог его использовать</li>
      *     <li>Включает CORS с настройками по умолчанию</li>
-     *     <li>Устанавливает политику управления сессиями как stateless (без сессий)</li>
-     *     <li>Разрешает все запросы к путям /api/auth/** без аутентификации</li>
+     *     <li>Создает сессии только при необходимости (SessionCreationPolicy.IF_REQUIRED)</li>
+     *     <li>Разрешает все запросы к путям WHITE_LIST_URLS без аутентификации</li>
      *     <li>Требует аутентификацию для всех остальных запросов</li>
      *     <li>Добавляет фильтр JWT перед фильтром UsernamePasswordAuthenticationFilter</li>
      * </ul>
@@ -62,17 +63,25 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        requestHandler.setCsrfRequestAttributeName("_csrf");
+
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers(WHITE_LIST_URLS)
+                )
                 .cors(cors -> {})
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -89,10 +98,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        authenticationProvider.setUserDetailsService(userDetailsService);
         return authenticationProvider;
     }
 

@@ -33,7 +33,8 @@ public class WebConfig {
                         .allowedOrigins("http://localhost:5173")
                         .allowedMethods("*")
                         .allowedHeaders("*")
-                        .exposedHeaders("Authorization");
+                        .allowCredentials(true) // Важно для CSRF cookie
+                        .exposedHeaders("Authorization", "X-CSRF-TOKEN"); // Добавляем CSRF токен в exposed headers
             }
         };
     }
