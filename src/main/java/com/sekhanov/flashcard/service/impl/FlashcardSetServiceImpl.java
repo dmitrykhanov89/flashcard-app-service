@@ -136,14 +136,18 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
     @Override
     @Transactional
     public boolean deleteFlashcardSet(Long id) {
-        if (flashcardSetRepository.existsById(id)) {
-            flashcardSetRepository.deleteById(id);
-            log.info("Удалён набор карточек id={}", id);
-            return true;
-        } else {
+        if (!flashcardSetRepository.existsById(id)) {
             log.warn("Попытка удалить несуществующий набор карточек id={}", id);
             return false;
         }
+        // Сначала убрать связи ManyToMany с пользователями
+        flashcardSetRepository.findById(id).ifPresent(flashcardSet -> {
+            flashcardSet.getUsers().forEach(user -> user.getFlashcardSets().remove(flashcardSet));
+            flashcardSet.getUsers().clear();
+        });
+        flashcardSetRepository.deleteById(id);
+        log.info("Удалён набор карточек id={}", id);
+        return true;
     }
 
     @Override

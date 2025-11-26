@@ -32,14 +32,14 @@ spring:
 #logging:
 #  level:
 #    root: INFO
-#    com.sekhanov.flashcard: DEBUG
+#    com.sekhanov.flashcard: TRACE
 #    liquibase: INFO
 
 logging:
   level:
     root: INFO
 #    com.sekhanov.flashcard: DEBUG
-    com.sekhanov.flashcard: TRACE
+    com.sekhanov.flashcard: INFO
 #    liquibase: DEBUG
   pattern:
     console: "%cyan(%d{HH:mm:ss}) %highlight(%-5level) %green([%thread]) %blue(%logger{36}) : %msg%n"
