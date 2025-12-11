@@ -8,14 +8,15 @@ spring:
     default-schema: public
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/flashcard_db
-    username: postgres
-    password: postgres
+#    переменные среды
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     platform: postgres
 
   mail:
-    host: localhost
+    host: ${SPRING_MAIL_HOST:localhost} # :по умолчанию
     port: 1025
     username:
     password:

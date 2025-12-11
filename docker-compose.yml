@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  backend:
+    build: .  # Строим образ из Dockerfile в текущей папке (backend)
+    container_name: app-backend  # Имя контейнера
+    ports:
+      - "8080:8080"  # Проброс порта: 8080 хост → 8080 контейнер
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/flashcard_db  # Подключение к контейнеру базы
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_MAIL_HOST: host.docker.internal  # Используем уже запущенный MailHog на хосте
+    depends_on:
+      - database  # Backend ждёт, пока база не запустится
+    networks:
+      - app-network  # Сеть для связи с UI и базой
+
+  ui:
+    build: ../flashcard-app-ui  # Строим образ из Dockerfile React приложения
+    container_name: app-ui
+    ports:
+      - "3000:80"  # Проброс порта: 3000 хост → 80 контейнер (Nginx)
+    environment:
+      VITE_API_URL: http://backend:8080  # URL backend для React
+    depends_on:
+      - backend  # UI ждёт запуска backend
+    networks:
+      - app-network  # Подключение к той же сети
+
+  database:
+    image: postgres  # Образ PostgreSQL
+    container_name: app-db
+    environment:
+      POSTGRES_DB: flashcard_db  # Создаём базу при первом запуске
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data  # Отдельный volume для сохранения данных
+    networks:
+      - app-network  # Сеть для связи с backend
+
+networks:
+  app-network:
+    driver: bridge  # Изолированная сеть Docker Compose
+
+volumes:
+  db_data:  # Отдельный volume для базы данных
+
+# запуск docker compose up --build

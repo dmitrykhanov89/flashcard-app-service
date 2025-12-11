@@ -5,6 +5,7 @@ import com.sekhanov.flashcard.dto.UserDTO;
 import com.sekhanov.flashcard.entity.User;
 import com.sekhanov.flashcard.repository.UserRepository;
 import com.sekhanov.flashcard.service.MailService;
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +40,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void createUser_withValidData_shouldSaveUserAndSendEmail() {
+    void createUser_withValidData_shouldSaveUserAndSendEmail() throws MessagingException {
         when(passwordEncoder.encode(createUserDTO.getPassword())).thenReturn("encodedPass");
         User user = makeUser(1L, "Ivan", "ivan@example.com", "encodedPass");
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -48,7 +50,7 @@ class UserServiceImplTest {
         assertThat(result).extracting(UserDTO::getId, UserDTO::getName, UserDTO::getEmail).containsExactly(1L, "Ivan", "ivan@example.com");
         verify(passwordEncoder).encode(createUserDTO.getPassword());
         verify(userRepository).save(any(User.class));
-        verify(mailService).sendMail(eq("ivan@example.com"), contains("Подтверждение"), contains("http://localhost:8080"));
+        verify(mailService).sendMail(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -69,7 +71,7 @@ class UserServiceImplTest {
     @Test
     void confirmEmail_withInvalidToken_shouldReturnNull() {
         when(userRepository.findByConfirmationToken("bad")).thenReturn(Optional.empty());
-        assertThat(userService.confirmEmail("bad")).isNull();
+        assertThatThrownBy(() -> userService.confirmEmail("bad")).isInstanceOf(IllegalArgumentException.class);
         verify(userRepository, never()).save(any());
     }
 

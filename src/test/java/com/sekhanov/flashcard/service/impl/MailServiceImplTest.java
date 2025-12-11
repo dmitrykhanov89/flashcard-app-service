@@ -1,5 +1,6 @@
 package com.sekhanov.flashcard.service.impl;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,7 @@ class MailServiceImplTest {
     private MailServiceImpl mailService;
 
     @Test
-    void sendMail_whenCalled_shouldSendMimeMessage(){
+    void sendMail_whenCalled_shouldSendMimeMessage() throws MessagingException {
         String email = "test@example.com";
         String subject = "Hello";
         String body = "<p>Body</p>";
@@ -32,7 +33,7 @@ class MailServiceImplTest {
     }
 
     @Test
-    void sendMail_whenCalled_shouldNotSendNullMimeMessage(){
+    void sendMail_whenCalled_shouldNotSendNullMimeMessage() throws MessagingException{
         MimeMessage mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 

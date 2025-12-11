@@ -2,6 +2,7 @@ package com.sekhanov.flashcard.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sekhanov.flashcard.dto.*;
+import com.sekhanov.flashcard.service.CardsService;
 import com.sekhanov.flashcard.service.FlashcardSetService;
 import com.sekhanov.flashcard.service.LastSeenFlashcardSetService;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,6 +33,8 @@ class FlashcardSetControllerTest {
     private FlashcardSetService flashcardSetService;
     @MockitoBean
     private LastSeenFlashcardSetService lastSeenFlashcardSetService;
+    @MockitoBean
+    private CardsService cardsService;
 
     @Test
     void createFlashcardSet_withValidRequest_shouldReturnCreatedSet() throws Exception {
