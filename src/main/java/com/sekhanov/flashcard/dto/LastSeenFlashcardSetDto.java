@@ -19,4 +19,6 @@ public class LastSeenFlashcardSetDto {
     private Long flashcardSetId;
     private String flashcardSetName;
     private LocalDateTime openedAt;
+    private String ownerName;
+    private int cardsCount;
 }

@@ -220,6 +220,7 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
         dto.setCards(flashcardSet.getCards().stream()
                 .map(entry -> new CardsDTO(entry.getId(), entry.getTerm(), entry.getDefinition()))
                 .toList());
+        dto.setOwnerName(flashcardSet.getOwner().getName() + " " + flashcardSet.getOwner().getSurname());
         return dto;
     }
 }

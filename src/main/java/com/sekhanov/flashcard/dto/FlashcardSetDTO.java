@@ -19,4 +19,5 @@ public class FlashcardSetDTO {
     private String name;
     private String description;
     private List<CardsDTO> cards;
+    private String ownerName;
 }

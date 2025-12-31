@@ -54,7 +54,9 @@ public class LastSeenFlashcardSetServiceImpl implements LastSeenFlashcardSetServ
         return new LastSeenFlashcardSetDto(
                 entity.getFlashcardSet().getId(),
                 entity.getFlashcardSet().getName(),
-                entity.getOpenedAt()
+                entity.getOpenedAt(),
+                entity.getFlashcardSet().getOwner().getName() + " " + entity.getFlashcardSet().getOwner().getSurname(),
+                entity.getFlashcardSet().getCards().size() // количество карточек
         );
     }
 }
