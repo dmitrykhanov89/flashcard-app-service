@@ -13,11 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MailServiceImplTest {
+class MailServiceImplDevTest {
     @Mock
     private JavaMailSender mailSender;
     @InjectMocks
-    private MailServiceImpl mailService;
+    private MailServiceImplDev mailService;
 
     @Test
     void sendMail_whenCalled_shouldSendMimeMessage() throws MessagingException {

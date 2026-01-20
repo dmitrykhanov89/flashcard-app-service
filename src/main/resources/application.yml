@@ -30,6 +30,13 @@ spring:
             enable: false
     default-encoding: UTF-8
 
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+resend:
+  api-key: ${RESEND_API_KEY}
+  sender: ${RESEND_SENDER:onboarding@resend.dev}
 #logging:
 #  level:
 #    root: INFO
