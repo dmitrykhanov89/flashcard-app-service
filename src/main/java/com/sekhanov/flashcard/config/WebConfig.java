@@ -18,8 +18,12 @@ import java.util.List;
 @Configuration
 public class WebConfig {
 
-    @Value("${app.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+    private final List<String> allowedOrigins;
+
+    public WebConfig(@Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
+
     /**
      * Создает {@link WebMvcConfigurer} для настройки CORS.
      * <p>

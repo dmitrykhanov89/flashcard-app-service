@@ -62,7 +62,7 @@ class LastSeenFlashcardSetRepositoryTest {
 
         List<LastSeenFlashcardSet> results = repository.findTop10ByUserIdOrderByOpenedAtDesc(user.getId());
         assertEquals(1, results.size());
-        assertEquals(set.getId(), results.getFirst().getFlashcardSet().getId());
+        assertEquals(set.getId(), results.get(0).getFlashcardSet().getId());
     }
 
     @Test
@@ -79,7 +79,7 @@ class LastSeenFlashcardSetRepositoryTest {
         lastSeen.setOpenedAt(LocalDateTime.now().plusSeconds(5));
         repository.save(lastSeen);
 
-        LastSeenFlashcardSet updated = repository.findTop10ByUserIdOrderByOpenedAtDesc(user.getId()).getFirst();
+        LastSeenFlashcardSet updated = repository.findTop10ByUserIdOrderByOpenedAtDesc(user.getId()).get(0);
         assertEquals(set.getId(), updated.getFlashcardSet().getId());
         assertTrue(updated.getOpenedAt().isAfter(oldTime));
     }

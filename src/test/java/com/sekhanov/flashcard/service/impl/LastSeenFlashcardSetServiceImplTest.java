@@ -2,9 +2,11 @@ package com.sekhanov.flashcard.service.impl;
 
 import com.sekhanov.flashcard.dto.LastSeenFlashcardSetDto;
 import com.sekhanov.flashcard.dto.UserDTO;
+import com.sekhanov.flashcard.entity.Cards;
 import com.sekhanov.flashcard.entity.FlashcardSet;
 import com.sekhanov.flashcard.entity.LastSeenFlashcardSet;
 import com.sekhanov.flashcard.entity.LastSeenFlashcardSet.LastSeenFlashcardSetId;
+import com.sekhanov.flashcard.entity.User;
 import com.sekhanov.flashcard.repository.LastSeenFlashcardSetRepository;
 import com.sekhanov.flashcard.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,11 +70,30 @@ class LastSeenFlashcardSetServiceImplTest {
         FlashcardSet set = new FlashcardSet();
         set.setId(setId);
         set.setName(name);
+        set.setOwner(TestEntities.owner());
+        set.setCards(List.of(TestEntities.card(set)));
 
         LastSeenFlashcardSet lastSeen = new LastSeenFlashcardSet();
         lastSeen.setId(new LastSeenFlashcardSetId(currentUser.getId(), setId));
         lastSeen.setFlashcardSet(set);
         lastSeen.setOpenedAt(LocalDateTime.now().minusMinutes(minutesAgo));
         return lastSeen;
+    }
+
+    private static class TestEntities {
+        private static User owner() {
+            User owner = new User();
+            owner.setName("Owner");
+            owner.setSurname("Test");
+            return owner;
+        }
+
+        private static Cards card(FlashcardSet set) {
+            Cards card = new Cards();
+            card.setTerm("term");
+            card.setDefinition("definition");
+            card.setFlashcardSet(set);
+            return card;
+        }
     }
 }
