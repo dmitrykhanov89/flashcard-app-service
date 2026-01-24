@@ -13,7 +13,6 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:Tsunami9}
     driver-class-name: org.postgresql.Driver
-    platform: postgres
 
   mail:
     host: ${SPRING_MAIL_HOST:localhost} # :по умолчанию
@@ -29,6 +28,9 @@ spring:
           ssl:
             enable: false
     default-encoding: UTF-8
+  sql:
+    init:
+      platform: postgres
 
 app:
   host: ${APP_HOST:http://localhost:8080}
