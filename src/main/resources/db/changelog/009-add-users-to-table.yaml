@@ -11,7 +11,7 @@ databaseChangeLog:
               - column: { name: login, value: "admin" }
               - column: { name: email, value: "admin@example.com" }
               - column: { name: password, value: "$2a$10$dJ8M3Mi4JYE64yiwReHBIuRrSM9MqHtmGRtAWJv.kWAbAL..i5q/a" }
-              - column: { name: is_email_confirmed, valueBoolean: true }
+              - column: { name: is_email_confirmed, valueBoolean: false }
               - column: { name: confirmation_token, value: null }
 
         - insert:
@@ -22,7 +22,7 @@ databaseChangeLog:
               - column: { name: login, value: "user1" }
               - column: { name: email, value: "user1@example.com" }
               - column: { name: password, value: "$2a$10$Y4sMk8Kt8lXd1yhUojmfUOTwnqnJsms1Ng.C31y94/NLacLfGyCY." }
-              - column: { name: is_email_confirmed, valueBoolean: true }
+              - column: { name: is_email_confirmed, valueBoolean: false }
               - column: { name: confirmation_token, value: null }
 
         - insert:
@@ -33,5 +33,5 @@ databaseChangeLog:
               - column: { name: login, value: "user2" }
               - column: { name: email, value: "user2@example.com" }
               - column: { name: password, value: "$2a$10$x29xBEj2oNa7Jv5zCwCG8uLaKE6VIa646jwyX5w8oVJmpBvbwe32m" }
-              - column: { name: is_email_confirmed, valueBoolean: true }
+              - column: { name: is_email_confirmed, valueBoolean: false }
               - column: { name: confirmation_token, value: null }

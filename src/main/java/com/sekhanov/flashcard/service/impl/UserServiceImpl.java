@@ -9,6 +9,7 @@ import com.sekhanov.flashcard.service.MailService;
 import com.sekhanov.flashcard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,6 +39,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
 
+    @Value("${app.host}")
+    private String host;
+
     @Override
     @Transactional
     public UserDTO createUser(CreateUserDTO dto) {
@@ -63,10 +67,7 @@ public class UserServiceImpl implements UserService {
         log.info("Создан новый пользователь id={} login={} email={}", user.getId(), user.getLogin(), user.getEmail());
 
         try {
-            String confirmLink = "http://localhost:8080/api/auth/confirm-email?token=" + token;
-            String message = "<p>Для подтверждения email перейдите по ссылке:</p>" +
-                    "<a href=\"" + confirmLink + "\">Подтвердить email</a>";
-            mailService.sendMail(dto.getEmail(), "Подтверждение email", message);
+            mailService.sendRegistrationMail(dto.getEmail(), token, host);
             log.debug("Письмо с подтверждением отправлено для email={}", dto.getEmail());
         } catch (Exception e) {
             log.error("Ошибка при отправке письма для email={}", dto.getEmail(), e);
