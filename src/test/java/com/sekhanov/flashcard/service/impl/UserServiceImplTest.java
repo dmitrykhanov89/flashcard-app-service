@@ -15,8 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -36,7 +39,8 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        createUserDTO = new CreateUserDTO("Ivan", "Petrov", "ivan", "ivan@example.com", "plainPass");
+        createUserDTO = new CreateUserDTO("Ivan", "Petrov", "ivan", "plainPass", "ivan@example.com");
+        ReflectionTestUtils.setField(userService, "host", "http://localhost:8080");
     }
 
     @Test
@@ -50,7 +54,7 @@ class UserServiceImplTest {
         assertThat(result).extracting(UserDTO::getId, UserDTO::getName, UserDTO::getEmail).containsExactly(1L, "Ivan", "ivan@example.com");
         verify(passwordEncoder).encode(createUserDTO.getPassword());
         verify(userRepository).save(any(User.class));
-        verify(mailService).sendMail(anyString(), anyString(), anyString());
+        verify(mailService).sendRegistrationMail(eq("ivan@example.com"), anyString(), any());
     }
 
     @Test

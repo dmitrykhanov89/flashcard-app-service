@@ -7,8 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,13 +22,15 @@ import static org.mockito.Mockito.*;
 class SecurityConfigTest {
     private UserRepository userRepository;
     private JwtService jwtService;
+    private List<String> allowedOrigins;
     private SecurityConfig securityConfig;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         jwtService = mock(JwtService.class);
-        securityConfig = new SecurityConfig(userRepository, jwtService);
+        allowedOrigins = List.of("http://localhost:5173", "https://app.example.com");
+        securityConfig = new SecurityConfig(allowedOrigins, userRepository, jwtService);
     }
 
     @Test
@@ -53,5 +60,17 @@ class SecurityConfigTest {
         assertNotNull(securityConfig.jwtFilter());
         assertNotNull(securityConfig.passwordEncoder());
         assertNotNull(securityConfig.userDetailsService());
+    }
+
+    @Test
+    void corsConfigurationSource_usesConfiguredOriginsAndHeaders() {
+        CorsConfigurationSource source = securityConfig.corsConfigurationSource();
+        CorsConfiguration config = source.getCorsConfiguration(new MockHttpServletRequest());
+
+        assertNotNull(config);
+        assertEquals(allowedOrigins, config.getAllowedOrigins());
+        assertEquals(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"), config.getAllowedMethods());
+        assertEquals(List.of("Authorization","Content-Type"), config.getAllowedHeaders());
+        assertTrue(Boolean.TRUE.equals(config.getAllowCredentials()));
     }
 }

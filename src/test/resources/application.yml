@@ -1,28 +1,44 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:flashcard-test-db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+  application:
+    name: flashcard
   liquibase:
-    enabled: false
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:5432}/${SPRING_DATASOURCE_DB:flashcard_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:Tsunami9}
+    driver-class-name: org.postgresql.Driver
   mail:
-    host: localhost
+    host: ${SPRING_MAIL_HOST:localhost}
     port: 1025
+    username:
+    password:
     properties:
       mail:
         smtp:
           auth: false
           starttls:
             enable: false
-jwt:
-  secret: 3c8f9d5e2a1b4c7d9f8e6a1b3c7d4e5f6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9
+          ssl:
+            enable: false
+    default-encoding: UTF-8
+  sql:
+    init:
+      platform: postgres
 app:
+  host: ${APP_HOST:http://localhost:8080}
   cors:
-    allowed-origins: http://localhost:5173
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+resend:
+  api-key: ${RESEND_API_KEY}
+  sender: ${RESEND_SENDER:onboarding@resend.dev}
+logging:
+  level:
+    root: INFO
+    com.sekhanov.flashcard: INFO
+  pattern:
+    console: "%cyan(%d{HH:mm:ss}) %highlight(%-5level) %green([%thread]) %blue(%logger{36}) : %msg%n"
+jwt:
+  secret: ${JWT_SECRET:nN1m4a2zY2M6H9v9q9s3vC0uKcRk8zqvY0l6Z3R1J2A=}

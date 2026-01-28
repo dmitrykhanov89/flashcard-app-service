@@ -1,21 +1,17 @@
 spring:
   application:
     name: flashcard
-
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
     default-schema: public
-
   datasource:
-#    переменные среды
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/flashcard_db}
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:5432}/${SPRING_DATASOURCE_DB:flashcard_db}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:Tsunami9}
     driver-class-name: org.postgresql.Driver
-
   mail:
-    host: ${SPRING_MAIL_HOST:localhost} # :по умолчанию
+    host: ${SPRING_MAIL_HOST:localhost}
     port: 1025
     username:
     password:
@@ -31,30 +27,18 @@ spring:
   sql:
     init:
       platform: postgres
-
 app:
   host: ${APP_HOST:http://localhost:8080}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
-
 resend:
   api-key: ${RESEND_API_KEY}
   sender: ${RESEND_SENDER:onboarding@resend.dev}
-#logging:
-#  level:
-#    root: INFO
-#    com.sekhanov.flashcard: TRACE
-#    liquibase: INFO
-
 logging:
   level:
     root: INFO
-#    com.sekhanov.flashcard: DEBUG
     com.sekhanov.flashcard: INFO
-#    liquibase: DEBUG
   pattern:
     console: "%cyan(%d{HH:mm:ss}) %highlight(%-5level) %green([%thread]) %blue(%logger{36}) : %msg%n"
-
-
 jwt:
-  secret: 3c8f9d5e2a1b4c7d9f8e6a1b3c7d4e5f6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9
+  secret: ${JWT_SECRET}
