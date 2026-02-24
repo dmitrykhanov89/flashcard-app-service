@@ -75,6 +75,7 @@ public class FlashcardSetServiceImpl implements FlashcardSetService {
         }
 
         FlashcardSet saved = flashcardSetRepository.save(flashcardSet);
+        lastSeenFlashcardSetService.saveLastSeenSet(saved.getId());
         log.info("Создан набор карточек id={} для пользователя id={}", saved.getId(), owner.getId());
 
         return toDTO(saved);
